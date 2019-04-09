@@ -1,0 +1,67 @@
+{
+    "title" : "Opioids: The Branding and Commercialization of Pain",
+    "desc": "Introduction and description Introduction and description Introduction and description Introduction and description Introduction and description Introduction and description Introduction and description Introduction and description Introduction and description",
+    "background": "black_and_yellow_smoke.png",
+    "content": [
+        {
+            "title": "The Salesforce",
+            "desc": "In 1995, following concern for under management of pain, the American Pain Society in collaboration with the Veteran’s Health Administration and the Joint Commission introduced pain as the “fifth vital sign”. The phrase “pain as the fifth vital sign” was initially coined to heighten awareness of pain treatment amongst healthcare professionals.",
+            "content": [
+                {
+                    "imagelink": "1.1.png",
+                    "imagedesc": "The three questions focused on pain accounted for 30 percent of the overall score, weighing pain-related questions heavily over the rest of the survey."
+                },
+                {
+                    "imagelink": "1.3.png",
+                    "imagedesc": ""
+                },
+                {
+                    "imagelink": "1.2.png",
+                    "imagedesc": "The three questions focused on pain accounted for 30 percent of the overall score, weighing pain-related questions heavily over the rest of the survey."
+                }
+            ]
+        },
+        {
+            "title": "Pain as the “Fifth Vital Sign",
+            "desc": "This culture ingrained in surveys and the mindset of patients paralyzed well-meaning doctors and led to loosely controlled opioid prescriptions for everything from surgeries to minor aches.",
+            "content": [
+                {
+                    "imagelink": "2.1.png",
+                    "imagedesc": ""
+                }
+            ]
+        },
+        {
+            "title": "HCAHPS Survey",
+            "desc": " This Purdue-JCAHO partnership is a strong example of how the branding of opioids has been used to govern medical practice and decisions. By linking the results of the survey to a hospital’s ability to attain resources, the Deficit Reduction Act and creators of the satisfaction surveys, inherently prime the behaviours of doctors and nurses - forcing them to act one way despite better judgement.",
+            "content": [
+                {
+                    "imagelink": "3.1.png",
+                    "imagedesc": "The three questions focused on pain accounted for 30 percent of the overall score, weighing pain-related questions heavily over the rest of the survey."
+                },
+                {
+                    "imagelink": "3.2.png",
+                    "imagedesc": "The three questions focused on pain accounted for 30 percent of the overall score, weighing pain-related questions heavily over the rest of the survey."
+                }
+            ]
+        },
+        {
+            "title": "Purdue- JCAHO Partnership",
+            "desc": "This culture ingrained in surveys and the mindset of patients paralyzed well-meaning doctors and led to loosely controlled opioid prescriptions for everything from surgeries to minor aches.",
+            "content": [
+                {
+                    "imagelink": "4.1.png",
+                    "imagedesc": "The three questions focused on pain accounted for 30 percent of the overall score, weighing pain-related questions heavily over the rest of the survey."
+                },
+                {
+                    "imagelink": "4.2.png",
+                    "imagedesc": "The three questions focused on pain accounted for 30 percent of the overall score, weighing pain-related questions heavily over the rest of the survey."
+                },
+                {
+                    "imagelink": "4.3.png",
+                    "imagedesc": "The three questions focused on pain accounted for 30 percent of the overall score, weighing pain-related questions heavily over the rest of the survey."
+                }
+            ]
+        }
+    ]
+}
