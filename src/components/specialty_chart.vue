@@ -4,20 +4,22 @@
     <div class="internal-medicine">
       Doctors working in
       <span class="selected-medicine dropdown-container">
-        <b-nav-item-dropdown text="Internal Medicine" right>
-            <b-dropdown-item href="#">EN</b-dropdown-item>
-            <b-dropdown-item href="#">ES</b-dropdown-item>
-            <b-dropdown-item href="#">RU</b-dropdown-item>
-            <b-dropdown-item href="#">FA</b-dropdown-item>
+        <b-nav-item-dropdown :text="selectedMed" right>
+            <b-dropdown-item href="#" :key="index"
+                v-on:click="selectMedicine(med)"
+                v-for="(med, index) of internalMeds" >
+                {{med}}
+            </b-dropdown-item>
         </b-nav-item-dropdown>
       </span>
       in
       <span class="selected-state dropdown-container">
-        <b-nav-item-dropdown text="California" right>
-            <b-dropdown-item href="#">EN</b-dropdown-item>
-            <b-dropdown-item href="#">ES</b-dropdown-item>
-            <b-dropdown-item href="#">RU</b-dropdown-item>
-            <b-dropdown-item href="#">FA</b-dropdown-item>
+        <b-nav-item-dropdown :text="selectedState.name" right>
+          <b-dropdown-item href="#" :key="index"
+              v-on:click="selectState(state)"
+              v-for="(state, index) of states">
+              {{state.name}}
+          </b-dropdown-item>
         </b-nav-item-dropdown>
       </span>
       prescribe
@@ -46,12 +48,14 @@ import data_2014 from '@/assets/data/2014.json'
 import data_2015 from '@/assets/data/2015.json'
 import data_2016 from '@/assets/data/2016.json'
 
+import STATES from '@/assets/states.json'
+
 // init chart constants
 const WIDTH = 1200
 const HEIGHT = 600
 const MARGIN = {
   top: 20,
-  bottom: 20,
+  bottom: 60,
   left: 20,
   right: 20
 }
@@ -66,7 +70,8 @@ const DATA = {
   2016: data_2016
 }
 const INITYEAR = 2013
-const DATA_RANGE = 40
+const DATA_RANGE = 45
+const YEARS = _.range(2013, 2017)
 
 // chart vue code
 export default {
@@ -74,21 +79,27 @@ export default {
   data: () => {
     return {
       year: INITYEAR,
-      data: DATA[INITYEAR],
+      data: [],
+      internalMeds: [],
+      states: [],
+      selectedMed: '',
+      selectedState: {},
       svgElement: '',
       svg: '',
       chartg: '',
       width: WIDTH - MARGIN.left - MARGIN.right,
       height: HEIGHT - MARGIN.top - MARGIN.bottom,
       yscale: '',
-      xscale: ''
+      xscale: '',
+      yearScale: ''
     }
   },
   mounted() {
+      this.changeYearData();
       this.svgElement = this.$refs.specialty;
       this.initChart();
-      // this.addSubHeading();
       this.drawChart();
+      this.addYearAxis();
   },
   methods: {
     initChart: function() {
@@ -117,28 +128,76 @@ export default {
       this.yscale = d3.scaleLinear()
         .range([this.height - (MARGIN.top + SUB_HEADING_SHIFT), 0])
         .domain([0, 100])
+
+      this.yearScale = d3.scalePoint()
+        .range([0.2 * this.width, 0.8 * this.width])
+        .domain(YEARS)
     },
-    addSubHeading: function() {
-      // chart sub heading
-      const subHeading = `
-        Doctors working in <span class="selected-medicine">Internal Medicine</span>
-        in <span class="selected-state">California</span> prescribe
-        <span class="num-prescriptions">100000</span> opioid prescriptions
-        per year
-      `;
+    addYearAxis() {
+      const axis = d3.axisBottom(this.yearScale);
+      this.chartg.append('g')
+        .attr('class', 'year-axis')
+        .attr('transform', `translate(0, ${this.height - (MARGIN.top + SUB_HEADING_SHIFT - 30)})`)
+        .call(axis)
 
-      d3.select('.internal-medicine')
-        .html(subHeading)
+      const self = this;
 
-      // this.svg.append('text')
-      //     .classed('specialty-chart-sub-heading', true)
-      //     .attr('x', headingWidth + 70)
-      //     .attr('y', SUB_HEADING_SHIFT)
-      //     .html(subHeading);
+      d3.selectAll('.tick text')
+        .classed('highlighted', function(d) {
+          const year = +d3.select(this).text();
+          if(year === INITYEAR) {
+            return true
+          } else {
+            return false
+          }
+        })
+        .on('click', function(d) {
+          self.year = +d3.select(this).text();
+          d3.selectAll('.tick text').classed('highlighted', false)
+          d3.select(this).classed('highlighted', true)
+          self.changeYearData();
+          self.drawChart();
+        });
+    },
+    selectState(state) {
+      this.selectedState = state; //{ state: state, name: STATES[state] };
+      this.drawChart();
+    },
+    selectMedicine(med) {
+      this.selectedMed = med;
+      this.drawChart();
+    },
+    changeYearData() {
+      this.data = DATA[this.year];
+      const chainData = _.chain(this.data);
+
+      this.internalMeds = chainData.map('specialty_description')
+          .uniq()
+          .concat('All')
+          .sortBy()
+          .value()
+
+      this.states = chainData.map('nppes_provider_state').uniq()
+        .concat('ALL')
+        .sortBy()
+        .map(state => {
+          return { state: state, name: STATES[state] }
+        })
+        .value()
+
+      if(_.keys(this.selectedState).length === 0)
+        this.selectedState = this.states.filter(d => d.state === 'ALL')[0]
+      if(this.selectedMed === '')
+        this.selectedMed = this.internalMeds.filter(d => d === 'All')[0]
     },
     filterData: function() {
       // filter the data to get the relevant dataset
-      return _.chain(this.data)
+      const filtered = _.chain(this.data)
+          .filter(d => (this.selectedMed === 'All' ||
+                d.specialty_description === this.selectedMed) &&
+              (this.selectedState.state === 'ALL' ||
+                d.nppes_provider_state === this.selectedState.state)
+          )
           // sort by the sum of opioid_prescriber_rate and la_opioid_prescriber_rate ascending
           .sortBy(d => (+d.opioid_prescriber_rate || 0) + (+d.la_opioid_prescriber_rate || 0))
           // make sure values are numbers
@@ -146,23 +205,34 @@ export default {
             _.keys(d).forEach(key => {
               d[key] = typeof +d[key] === 'undefined' || isNaN(+d[key]) ? d[key] : +d[key];
             })
+            if(typeof d.la_opioid_prescriber_rate === 'undefined') {
+              d.la_opioid_prescriber_rate = 0
+            }
+            if(typeof d.opioid_prescriber_rate === 'undefined') {
+              d.opioid_prescriber_rate = 0
+            }
             return d
           })
           // make it descending
           .reverse()
           // remove undefined / 0 values
-          .filter(d => typeof d.la_opioid_prescriber_rate !== 'undefined' &&
-                        d.la_opioid_prescriber_rate !== 0)
-          // take the top values defined by DATA_RANGE
+          .filter(d => !(d.la_opioid_prescriber_rate === 0 && d.opioid_prescriber_rate === 0))
+          // .filter(d => typeof d.la_opioid_prescriber_rate !== 'undefined' &&
+          //             typeof d.opioid_prescriber_rate !== 'undefined') // &&
+                      // d.opioid_prescriber_rate !== 0 &&
+                      // d.la_opioid_prescriber_rate !== 0)
           .slice(0, DATA_RANGE)
           .value()
+
+      return filtered
     },
     drawChart: function() {
       const data = this.filterData()
 
       const numFormat = d3.format('.0%');
 
-      const gdata = this.chartg.selectAll('.ball-group').data(data)
+      const gdata = this.chartg.selectAll('.ball-group')
+        .data(data, (d, i) => this.year + d.specialty_description + i + d.nppes_provider_state)
 
       gdata.exit().remove();
 
@@ -188,16 +258,17 @@ export default {
 
       // opioid_prescriber_rate circle
       group.append('circle')
+        .filter(d => d.opioid_prescriber_rate !== 0)
         .attr('r', 5)
         .attr('cy', d => {
           const yval = this.yscale(d.opioid_prescriber_rate)
-          console.log(yval)
           return yval;
         })
         .classed('opioid-prescriber-rate', true);
 
       // opioid_prescriber_rate text
       group.append('text')
+        .filter(d => d.opioid_prescriber_rate !== 0)
         .attr('x', 10)
         .attr('y', d => this.yscale(d.opioid_prescriber_rate))
         .classed('opioid-prescriber-rate opioid-value', true)
@@ -205,12 +276,14 @@ export default {
 
       // opioid_prescriber_rate circle
       group.append('circle')
+        .filter(d => d.la_opioid_prescriber_rate !== 0)
         .attr('r', 5)
         .attr('cy', d => this.yscale(d.la_opioid_prescriber_rate))
         .classed('la-opioid-prescriber-rate', true);
 
       // opioid_prescriber_rate text
       group.append('text')
+        .filter(d => d.la_opioid_prescriber_rate !== 0)
         .attr('x', 10)
         .attr('y', d => this.yscale(d.la_opioid_prescriber_rate))
         .classed('la-opioid-prescriber-rate opioid-value', true)
@@ -218,6 +291,7 @@ export default {
 
       // white line joining the circles
       group.append('line')
+          .filter(d => d.la_opioid_prescriber_rate !== 0)
           .attr('r', 5)
           .attr('y1', d => this.yscale(d.opioid_prescriber_rate))
           .attr('y2', d => this.yscale(d.la_opioid_prescriber_rate))
@@ -228,6 +302,24 @@ export default {
 </script>
 
 <style lang="scss">
+  .year-axis {
+    .tick {
+      line { stroke: #fff; }
+      text {
+        fill: #fff;
+        cursor: pointer;
+        font-size: 12px;
+      }
+      .highlighted {
+        font-size: 16px;
+        fill: #F8E368;
+        font-weight: bold;
+      }
+    }
+    path {
+      stroke: #fff;
+    }
+  }
   .internal-medicine {
     position: absolute;
     top: 120px;
@@ -245,6 +337,9 @@ export default {
         }
         .dropdown-menu {
           background-color: #000;
+          height: 300px;
+          overflow-y: scroll;
+          overflow-x: none;
         }
       }
     }
