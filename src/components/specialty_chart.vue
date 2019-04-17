@@ -34,6 +34,13 @@
       opioid prescriptions
       per year
     </div>
+    <div class="opioid-text">
+      Opiods made up
+      <span class="prescription highlighted">28%</span>
+      of total prescriptions for doctor
+      <span class="doctor highlighted">Jane Doe</span> in
+      <span class="state highlighted">California</span>
+    </div>
   </div>
 </template>
 
@@ -52,14 +59,14 @@ import STATES from '@/assets/states.json'
 
 // init chart constants
 const WIDTH = 1200
-const HEIGHT = 600
+const HEIGHT = 800
 const MARGIN = {
   top: 20,
-  bottom: 60,
-  left: 20,
+  bottom: 100,
+  left: 100,
   right: 20
 }
-const SUB_HEADING_SHIFT = 150
+const SUB_HEADING_SHIFT = 300
 const HEADING_SHIFT = 100
 const headingWidth = WIDTH / 2 - 300
 const heading = 'How Does the United States Feel Pain?'
@@ -100,6 +107,7 @@ export default {
       this.initChart();
       this.drawChart();
       this.addYearAxis();
+      this.addYaxis();
   },
   methods: {
     initChart: function() {
@@ -113,6 +121,8 @@ export default {
         .attr('x', headingWidth)
         .attr('y', HEADING_SHIFT)
         .text(heading);
+
+      this.addMeanPrescriptions();
 
       //main chart container
       this.chartg = this.svg
@@ -133,12 +143,52 @@ export default {
         .range([0.2 * this.width, 0.8 * this.width])
         .domain(YEARS)
     },
+    addMeanPrescriptions() {
+      const g = this.svg.append('g')
+        .classed('mean-prescriptions', true)
+        .attr('transform', `translate(${headingWidth + 150}, ${SUB_HEADING_SHIFT - 40})`);
+
+      g.append('text').text('Mean Rate of Prescriptions by opioid type');
+
+      const data = [
+        {color: '#fff', label: 'Long Acting Opioids', class: 'la-opioids', value: '20%'},
+        {color: '#F8E368', label: 'Opioids', class: 'opioids', value: '12%'}
+      ];
+
+      const group = g.selectAll('g')
+        .data(data).enter()
+        .append('g')
+        .attr('class', d => d.class + '_group')
+        .attr('transform', (d, i) => `translate(0, ${i * 30 + 30})`);
+
+      group.append('circle')
+        .attr('r', 5)
+        .style('fill', d => d.color);
+
+      group.append('text')
+        .attr('class', 'label')
+        .attr('x', 10)
+        .attr('y', 5)
+        .text(d => d.label);
+
+      group.append('text')
+        .attr('class', d => d.class)
+        .attr('x', 200)
+        .attr('y', 5)
+        .text(d => d.value)
+    },
     addYearAxis() {
       const axis = d3.axisBottom(this.yearScale);
-      this.chartg.append('g')
-        .attr('class', 'year-axis')
+      const g = this.chartg.append('g')
+        .attr('class', 'year-axis axis')
         .attr('transform', `translate(0, ${this.height - (MARGIN.top + SUB_HEADING_SHIFT - 30)})`)
         .call(axis)
+
+      g.append("text")
+        .attr("y", 50)
+        .attr("x", 0.5 * this.width)
+        .attr('class', 'axis-label')
+        .text("Year");
 
       const self = this;
 
@@ -158,6 +208,21 @@ export default {
           self.changeYearData();
           self.drawChart();
         });
+    },
+    addYaxis() {
+      const axis = d3.axisLeft(this.yscale);
+      const g = this.chartg.append('g')
+        .attr('class', 'y-axis axis')
+        .attr('transform', `translate(-20, 0)`)
+        .call(axis)
+
+      g.append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", -50)
+            .attr("x", -200)
+            .attr('class', 'axis-label')
+            .text("Opioids as a Percentage of Total Prescriptions");
+
     },
     selectState(state) {
       this.selectedState = state; //{ state: state, name: STATES[state] };
@@ -228,8 +293,16 @@ export default {
     },
     drawChart: function() {
       const data = this.filterData()
-
       const numFormat = d3.format('.0%');
+
+      const la = d3.sum(data, d => d.la_opioid_prescriber_rate) / data.length
+      const op = d3.sum(data, d => d.opioid_prescriber_rate) / data.length
+
+      d3.select('.mean-prescriptions .la-opioids')
+        .text(numFormat(la/100));
+
+        d3.select('.mean-prescriptions .opioids')
+          .text(numFormat(op/100));
 
       const gdata = this.chartg.selectAll('.ball-group')
         .data(data, (d, i) => this.year + d.specialty_description + i + d.nppes_provider_state)
@@ -249,11 +322,20 @@ export default {
         d3.selectAll('.ball-group').classed('highlighted', false);
         d3.select(this).classed('faded', false);
         d3.select(this).classed('highlighted', true);
+        const total = (d.opioid_prescriber_rate || 0) + (d.la_opioid_prescriber_rate || 0)
+        d3.select('.opioid-text')
+          .classed('visible', true);
+        d3.select('.opioid-text .prescription').text(numFormat(total/100));
+        const name = _.startCase(_.toLower(`${d.nppes_provider_first_name} ${d.nppes_provider_last_org_name}`));
+        d3.select('.opioid-text .doctor').text(name);
+        d3.select('.opioid-text .state').text(STATES[d.nppes_provider_state])
+        console.log(total);
       })
 
       group.on('mouseleave', function(d){
         d3.selectAll('.ball-group').classed('faded', false);
         d3.selectAll('.ball-group').classed('highlighted', false);
+        d3.select('.opioid-text').classed('visible', false);
       })
 
       // opioid_prescriber_rate circle
@@ -302,7 +384,7 @@ export default {
 </script>
 
 <style lang="scss">
-  .year-axis {
+  .axis {
     .tick {
       line { stroke: #fff; }
       text {
@@ -310,21 +392,40 @@ export default {
         cursor: pointer;
         font-size: 12px;
       }
-      .highlighted {
-        font-size: 16px;
-        fill: #F8E368;
-        font-weight: bold;
-      }
     }
     path {
       stroke: #fff;
+    }
+    .axis-label {
+      fill: #fff;
+      text-anchor: middle;
+      font-size: 12px;
+    }
+  }
+  .year-axis {
+      .highlighted {
+        font-size: 16px !important;
+        fill: #F8E368 !important;
+        font-weight: bold;
+      }
+  }
+  .opioid-text {
+    display: none;
+    position: absolute;
+    top: 200px;
+    left: 25%;
+    color: #fff;
+    font-size: 20px;
+    background-color: grey;
+    .highlighted {
+      color: #F8E368;
+      font-weight: bold;
     }
   }
   .internal-medicine {
     position: absolute;
     top: 120px;
-    left: 50%;
-    width: 660px;
+    left: 20%;
     color: #fff;
     font-size: 20px;
     .dropdown-container {
@@ -371,9 +472,15 @@ export default {
   .faded {
     opacity: 0.3;
   }
+  .visible {
+    display: block;
+  }
   .highlighted {
     .opioid-value {
       display: block;
     }
+  }
+  .mean-prescriptions {
+    fill:#fff;
   }
 </style>

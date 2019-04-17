@@ -1,65 +1,66 @@
 {
     "title" : "Opioids: The Branding and Commercialization of Pain",
-    "desc": "Introduction and description Introduction and description Introduction and description Introduction and description Introduction and description Introduction and description Introduction and description Introduction and description Introduction and description",
+    "desc": "Over the past two decades, the branding and commercialization of opioids has created one of the greatest commercial successes and public health tragedies in the United States. Multifaceted marketing strategies, created by large pharmaceutical companies, highlight how the carefully curated image of opioids created a ubiquitous presence of the drug across the United States and changed the way Americans perceive pain. ",
     "background": "black_and_yellow_smoke.png",
     "content": [
         {
             "title": "The Salesforce",
-            "desc": "In 1995, following concern for under management of pain, the American Pain Society in collaboration with the Veteran’s Health Administration and the Joint Commission introduced pain as the “fifth vital sign”. The phrase “pain as the fifth vital sign” was initially coined to heighten awareness of pain treatment amongst healthcare professionals.",
+            "desc": "One of the cornerstones of Purdue’s marketing campaign and a long standing pharmaceutical marketing tactic to garner momentum for new drugs is the strategic mobilization of medical experts",
             "content": [
                 {
                     "imagelink": "1.1.png",
-                    "imagedesc": "The three questions focused on pain accounted for 30 percent of the overall score, weighing pain-related questions heavily over the rest of the survey."
+                    "imagedesc": "In 2000, Purdue gathered a team of 671, which quickly grew to 2500, sales representatives to market OxyContin to around 94,000 doctors."
+
                 },
                 {
                     "imagelink": "1.3.png",
-                    "imagedesc": ""
+                    "imagedesc": "In order to build credibility, the salesforce charged expert medical thought leaders to speak positively about the new drug to professionals, workshops, and medical conferences to ensure that the drug reached the correct people."
                 },
                 {
                     "imagelink": "1.2.png",
-                    "imagedesc": "The three questions focused on pain accounted for 30 percent of the overall score, weighing pain-related questions heavily over the rest of the survey."
+                    "imagedesc": "During conferences, Oxycontin branded marketing materials were distributed to increase the brand's presence."
                 }
             ]
         },
         {
             "title": "Pain as the “Fifth Vital Sign",
-            "desc": "This culture ingrained in surveys and the mindset of patients paralyzed well-meaning doctors and led to loosely controlled opioid prescriptions for everything from surgeries to minor aches.",
+            "desc": "In 1995, following concern for under management of pain, the American Pain Society in collaboration with the Veteran’s Health Administration and the Joint Commission introduced pain as the “fifth vital sign”. Since vital signs are taken seriously, the phrase was initially coined to heighten awareness of pain treatment amongst healthcare professionals.",
             "content": [
                 {
                     "imagelink": "2.1.png",
-                    "imagedesc": ""
+                    "imagedesc": "The introduction of the 0-to-10 Numeric Rating Scale (NRS) intended to help healthcare professionals define pain and provide consistent communication by matching pain intensity to a number."
                 }
             ]
         },
         {
             "title": "HCAHPS Survey",
-            "desc": " This Purdue-JCAHO partnership is a strong example of how the branding of opioids has been used to govern medical practice and decisions. By linking the results of the survey to a hospital’s ability to attain resources, the Deficit Reduction Act and creators of the satisfaction surveys, inherently prime the behaviours of doctors and nurses - forcing them to act one way despite better judgement.",
+            "desc": " The HCAHPS survey, used since 2005 in many hospitals during a patient’s discharge, is one of the many patient satisfaction surveys that include three or more pain management related questions.",
             "content": [
                 {
                     "imagelink": "3.1.png",
-                    "imagedesc": "The three questions focused on pain accounted for 30 percent of the overall score, weighing pain-related questions heavily over the rest of the survey."
+                    "imagedesc": ""
                 },
                 {
                     "imagelink": "3.2.png",
-                    "imagedesc": "The three questions focused on pain accounted for 30 percent of the overall score, weighing pain-related questions heavily over the rest of the survey."
+                    "imagedesc": "In 2010, an extension to the HCAHPS survey rewarded hospitals that scored high in clinical outcomes and patient experience. The three questions focused on pain accounted for 30 percent of the overall score, weighing pain-related questions heavily over the rest of the survey. "
                 }
             ]
         },
         {
             "title": "Purdue- JCAHO Partnership",
-            "desc": "This culture ingrained in surveys and the mindset of patients paralyzed well-meaning doctors and led to loosely controlled opioid prescriptions for everything from surgeries to minor aches.",
+            "desc": "The Joint Commission (JCAHO) is an organization that accredits more than 21,000 US health care organizations and programs.The Purdue-JCAHO partnership is an example of how big pharmaceutical companies formed strong alliances in order to push their drugs forward.",
             "content": [
                 {
                     "imagelink": "4.1.png",
-                    "imagedesc": "The three questions focused on pain accounted for 30 percent of the overall score, weighing pain-related questions heavily over the rest of the survey."
+                    "imagedesc": "Multiple opioid related advertisements were distributed in the many JCAHO health care organizations and programs"
                 },
                 {
                     "imagelink": "4.2.png",
-                    "imagedesc": "The three questions focused on pain accounted for 30 percent of the overall score, weighing pain-related questions heavily over the rest of the survey."
+                    "imagedesc": ""
                 },
                 {
                     "imagelink": "4.3.png",
-                    "imagedesc": "The three questions focused on pain accounted for 30 percent of the overall score, weighing pain-related questions heavily over the rest of the survey."
+                    "imagedesc": "Opioids were advertised as being fast relief for severe pain."
                 }
             ]
         }

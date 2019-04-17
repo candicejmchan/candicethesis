@@ -19,7 +19,7 @@
       </div>
     </section>
     <section class="row specialty-chart-section">
-      <div class="col-6">
+      <div class="col-12">
         <SpecialtyChart />
       </div>
     </section>
