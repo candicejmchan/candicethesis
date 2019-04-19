@@ -88,7 +88,7 @@ export default {
       yearScale: '',
       centerx: '',
       centery: '',
-      randomRadii: _.range(10, 200, 10)
+      randomRadii: _.range(10, 200, 30)
     }
   },
   mounted() {
@@ -224,32 +224,10 @@ export default {
 
       this.rscale_drug_cost.domain([0, total_all_states])
 
-      const inBetState = _.range(100000, _.round(total_selected_state), 100000);
-      const inBetAll = _.range(total_selected_state, _.round(total_all_states), 1000000);
-      const inbetweenCircles = inBetState.concat(inBetAll);
-
       const group = this.svg.append('g').attr('class', 'total-cost-circles');
 
       const centerx = this.centerx;
       const centery = this.centery;
-
-      const gdata = group.selectAll('circle')
-                .data(inbetweenCircles);
-
-      gdata.enter()
-        .append('circle')
-        .attr('class', 'circle-ring')
-        .attr('clip-path', 'url(#clip-path-total-cost)')
-        .attr('r', d => this.rscale_drug_cost(d))
-        .classed('colored-circle', d => {
-          if(d <= total_selected_state) {
-            return true;
-          } else {
-            return false;
-          }
-        })
-        .attr('cx', centerx)
-        .attr('cy', centery)
 
       group.append('circle')
         .attr('class', 'total-all-circle')
@@ -264,6 +242,15 @@ export default {
         .attr('r', d => this.rscale_drug_cost(total_selected_state))
         .attr('cx', centerx)
         .attr('cy', centery)
+
+      d3.selectAll('.random-circles .circle-ring')
+          .classed('colored-circle', d => {
+            if(d <= this.rscale_drug_cost(total_selected_state)) {
+              return true;
+            } else {
+              return false;
+            }
+          });
     },
     drawOpioidCircles: function() {
       const total_all_states_opioid = _.chain(this.data)
@@ -285,32 +272,10 @@ export default {
 
       this.rscale_opioid_cost.domain([0, total_all_states_opioid])
 
-      const inBetState = _.range(10000, _.round(total_selected_state_opioid), 10000);
-      const inBetAll = _.range(total_selected_state_opioid, _.round(total_all_states_opioid), 100000);
-      const inbetweenCircles = inBetState.concat(inBetAll);
-
       const centerx = this.centerx;
       const centery = this.centery;
 
       const group = this.svg.append('g').attr('class', 'opioid-circles');
-
-      const gdata = group.selectAll('circle')
-                .data(inbetweenCircles);
-
-      gdata.enter()
-        .append('circle')
-        .attr('class', 'circle-ring')
-        .attr('clip-path', 'url(#clip-path-opioid)')
-        .attr('r', d => this.rscale_opioid_cost(d))
-        .classed('colored-circle', d => {
-          if(d <= total_selected_state_opioid) {
-            return true;
-          } else {
-            return false;
-          }
-        })
-        .attr('cx', centerx)
-        .attr('cy', centery)
 
       group.append('circle')
         .attr('class', 'total-all-circle')
@@ -325,6 +290,15 @@ export default {
         .attr('r', d => this.rscale_opioid_cost(total_selected_state_opioid))
         .attr('cx', centerx)
         .attr('cy', centery)
+
+      d3.selectAll('.random-circles .circle-ring')
+          .classed('colored-circle', d => {
+            if(d <= this.rscale_opioid_cost(total_selected_state_opioid)) {
+              return true;
+            } else {
+              return false;
+            }
+          });
     },
     drawRandomCircles: function() {
       const group = this.svg.append('g').attr('class', 'random-circles');
@@ -343,8 +317,17 @@ export default {
       // const data = this.filterData()
       const numFormat = d3.format('.0%');
 
+      this.drawRandomCircles();
       this.drawTotalCostCircles();
       this.drawOpioidCircles();
+
+      this.svg.append('line')
+        .attr('x1', this.centerx)
+        .attr('y1', this.centery - 210)
+        .attr('x2', this.centerx)
+        .attr('y2', this.centery + 210)
+        .style('stroke', '#000')
+        .style('stroke-width', '5px');
 
     }
   }
@@ -463,7 +446,7 @@ export default {
   .total-sel-circle {
     stroke: #F8E368;
     stroke-width: 3px;
-    fill: none;
+    fill: #F8E368;
   }
   .circle-ring {
     stroke: #fff;
