@@ -23,6 +23,11 @@
         <SpecialtyChart />
       </div>
     </section>
+    <section class="row cost-chart-section">
+      <div class="col-12">
+        <CostChart />
+      </div>
+    </section>
 
     <!-- Modal Component -->
     <b-modal ref="image-modal" size="xl" hide-footer hide-header centered title="">
@@ -72,6 +77,7 @@ import HelloWorld from '@/components/HelloWorld.vue'
 import Intro from '@/components/intro.vue'
 import Advert from '@/components/advert.vue'
 import SpecialtyChart from '@/components/specialty_chart.vue'
+import CostChart from '@/components/cost_chart.vue'
 
 export default {
   name: 'home',
@@ -122,7 +128,8 @@ export default {
     HelloWorld,
     Intro,
     Advert,
-    SpecialtyChart
+    SpecialtyChart,
+    CostChart
   }
 }
 </script>
