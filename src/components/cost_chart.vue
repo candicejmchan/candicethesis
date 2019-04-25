@@ -1,7 +1,7 @@
 <template>
   <div>
     <svg class="cost-chart" ref="cost"></svg>
-    <div class="internal-medicine">
+    <div class="internal-medicine description">
       Doctors working in
       <span class="selected-medicine dropdown-container">
         <b-nav-item-dropdown :text="selectedMed" right>
@@ -24,7 +24,7 @@
       </span>
       allocate
       <span class="cost-value">
-        $50000
+        {{costValue}}
       </span>
       on opioids per year
     </div>
@@ -88,7 +88,9 @@ export default {
       yearScale: '',
       centerx: '',
       centery: '',
-      randomRadii: _.range(10, 200, 30)
+      costValue: '',
+      randomRadii: _.range(10, 200, 30),
+      textFormat: d3.format('$,.0f')
     }
   },
   mounted() {
@@ -104,8 +106,10 @@ export default {
         .attr('width', WIDTH)
         .attr('height', HEIGHT)
 
-      this.centerx = this.width / 2;
+      this.centerx = this.width / 2 + 60;
       this.centery = (this.height + SUB_HEADING_SHIFT)/2;
+
+      this.costValue = this.textFormat(0);
 
       const defs = this.svg.append('defs');
       const clip_total_cost = defs.append('clipPath')
@@ -126,17 +130,17 @@ export default {
 
       // chart heading
       this.svg.append('text')
-        .classed('specialty-chart-heading', true)
-        .attr('x', headingWidth)
+        .classed('specialty-chart-heading heading', true)
+        .attr('x', headingWidth - 30)
         .attr('y', HEADING_SHIFT)
         .text(heading);
 
       // y scale. shift height due to heading and sub heading
       this.rscale_drug_cost = d3.scaleLinear()
-        .range([0, 200]);
+        .range([20, 200]);
 
       this.rscale_opioid_cost = d3.scaleLinear()
-        .range([0, 200]);
+        .range([20, 200]);
 
       this.yearScale = d3.scalePoint()
         .range([0.2 * this.width, 0.8 * this.width])
@@ -145,8 +149,8 @@ export default {
     addYearAxis() {
       const axis = d3.axisBottom(this.yearScale);
       const g = this.svg.append('g')
-        .attr('class', 'year-axis axis')
-        .attr('transform', `translate(0, ${this.height + 50})`)
+        .attr('class', 'cost-year-axis axis')
+        .attr('transform', `translate(60, ${this.height + 50})`)
         .call(axis)
 
       g.append("text")
@@ -157,7 +161,7 @@ export default {
 
       const self = this;
 
-      d3.selectAll('.tick text')
+      d3.selectAll('.cost-year-axis .tick text')
         .classed('highlighted', function(d) {
           const year = +d3.select(this).text();
           if(year === INITYEAR) {
@@ -168,7 +172,7 @@ export default {
         })
         .on('click', function(d) {
           self.year = +d3.select(this).text();
-          d3.selectAll('.tick text').classed('highlighted', false)
+          d3.selectAll('.cost-year-axis .tick text').classed('highlighted', false)
           d3.select(this).classed('highlighted', true)
           self.changeYearData();
           self.drawChart();
@@ -202,7 +206,7 @@ export default {
         .value()
 
       if(_.keys(this.selectedState).length === 0)
-        this.selectedState = this.states.filter(d => d.state === 'CA')[0]
+        this.selectedState = this.states.filter(d => d.state === 'ALL')[0]
       if(this.selectedMed === '')
         this.selectedMed = this.internalMeds.filter(d => d === 'Internal Medicine')[0]
     },
@@ -211,20 +215,42 @@ export default {
     drawTotalCostCircles: function(){
       const total_all_states = _.chain(this.data)
         .filter(d => d.specialty_description === this.selectedMed || this.selectedMed === 'All')
-        .map('total_drug_cost')
+        .map(d => +d['total_drug_cost'] || 0)
         .reduce( (sum, d) => d + sum)
         .value();
 
-      const total_selected_state = _.chain(this.data)
-        .filter(d => d.specialty_description === this.selectedMed || this.selectedMed === 'All')
-        .filter(d => d.nppes_provider_state === this.selectedState.state || this.selectedState.state === 'ALL')
-        .map('total_drug_cost')
+      let total_selected_state = _.chain(this.data)
+        .filter(d => {
+            return (
+              (
+                (d.specialty_description === this.selectedMed) ||
+                (this.selectedMed === 'All')
+              ) &&
+              ((d.nppes_provider_state === this.selectedState.state) ||
+              (this.selectedState.state === 'ALL'))
+            );
+        });
+
+      const total_branded = total_selected_state
+        .map(d => +d['brand_drug_cost'] || 0)
+        .reduce( (sum, d) => d + sum )
+        .value() || 0;
+
+      const total_generic = total_selected_state
+        .map(d => +d['generic_drug_cost'] || 0)
+        .reduce( (sum, d) => ((d || 0) + sum) )
+        .value() || 0;
+
+      total_selected_state = total_selected_state
+        .map(d => +d['total_drug_cost'] || 0)
         .reduce( (sum, d) => d + sum)
-        .value();
+        .value() || 0;
 
       this.rscale_drug_cost.domain([0, total_all_states])
 
-      const group = this.svg.append('g').attr('class', 'total-cost-circles');
+      d3.select('.total-cost-circles').remove();
+
+      const group = this.svg.append('g').attr('class', 'total-cost-circles description');
 
       const centerx = this.centerx;
       const centery = this.centery;
@@ -239,9 +265,45 @@ export default {
       group.append('circle')
         .attr('class', 'total-sel-circle')
         .attr('clip-path', 'url(#clip-path-total-cost)')
-        .attr('r', d => this.rscale_drug_cost(total_selected_state))
+        .attr('r', d => {
+          return total_selected_state === 0 ? 0 :
+            this.rscale_drug_cost(total_selected_state);
+        })
         .attr('cx', centerx)
         .attr('cy', centery)
+
+      group.append('line')
+        .attr('class', 'hor-line-total-cost')
+        .attr('x1', this.centerx - 200)
+        .attr('y1', this.centery)
+        .attr('x2', this.centerx - 500)
+        .attr('y2', this.centery)
+        .style('stroke', '#fff')
+        .style('stroke-width', '2px');
+
+      group.append('text')
+        .attr('x', this.centerx - 500)
+        .attr('y', this.centery - 50)
+        .attr('class', 'circle-text')
+        .text(this.textFormat(total_selected_state));
+
+      group.append('text')
+        .attr('x', this.centerx - 500)
+        .attr('y', this.centery - 20)
+        .attr('class', 'circle-text-general')
+        .text('Total Cost of Drugs in Internal Medicine');
+
+      group.append('text')
+        .attr('x', this.centerx - 500)
+        .attr('y', this.centery + 30)
+        .attr('class', 'circle-text-general')
+        .text(`Total Branded Drug Costs: ${this.textFormat(total_branded)}`);
+
+      group.append('text')
+        .attr('x', this.centerx - 500)
+        .attr('y', this.centery + 60)
+        .attr('class', 'circle-text-general')
+        .text(`Total Generic Drug Costs: ${this.textFormat(total_generic)}`);
 
       d3.selectAll('.random-circles .circle-ring')
           .classed('colored-circle', d => {
@@ -261,21 +323,46 @@ export default {
         .reduce( (sum, d) => d + sum)
         .value();
 
-      const total_selected_state_opioid = _.chain(this.data)
-        .filter(d => d.specialty_description === this.selectedMed || this.selectedMed === 'All')
-        .filter(d => d.nppes_provider_state === this.selectedState.state || this.selectedState.state === 'ALL')
+      let total_selected_state_opioid = _.chain(this.data)
+        .filter(d => {
+            return (
+              (
+                (d.specialty_description === this.selectedMed) ||
+                (this.selectedMed === 'All')
+              ) &&
+              ((d.nppes_provider_state === this.selectedState.state) ||
+              (this.selectedState.state === 'ALL'))
+            );
+        });
+
+      const total_opioid_drug_cost = total_selected_state_opioid
+        .map(d => (+d.opioid_drug_cost || 0))
+        .reduce( (sum, d) => d + sum)
+        .value() || 0;
+
+      const total_la_opioid_drug_cost = total_selected_state_opioid
+        .map(d => (+d.la_opioid_drug_cost || 0))
+        .reduce( (sum, d) => d + sum)
+        .value() || 0;
+
+
+      total_selected_state_opioid = total_selected_state_opioid
         .map(d => {
           return (+d.opioid_drug_cost || 0) + (+d.la_opioid_drug_cost || 0)
         })
         .reduce( (sum, d) => d + sum)
-        .value();
+        .value() || 0;
+
+      this.costValue = this.textFormat(total_selected_state_opioid);
 
       this.rscale_opioid_cost.domain([0, total_all_states_opioid])
 
       const centerx = this.centerx;
       const centery = this.centery;
 
-      const group = this.svg.append('g').attr('class', 'opioid-circles');
+      d3.select('.opioid-circles').remove();
+
+      const group = this.svg.append('g').attr('class', 'opioid-circles description');
 
       group.append('circle')
         .attr('class', 'total-all-circle')
@@ -287,9 +374,49 @@ export default {
       group.append('circle')
         .attr('class', 'total-sel-circle')
         .attr('clip-path', 'url(#clip-path-opioid)')
-        .attr('r', d => this.rscale_opioid_cost(total_selected_state_opioid))
+        .attr('r', d => {
+          return total_selected_state_opioid === 0 ? 0 :
+            this.rscale_opioid_cost(total_selected_state_opioid);
+        })
         .attr('cx', centerx)
         .attr('cy', centery)
+
+      group.append('line')
+        .attr('class', 'hor-line-opioid')
+        .attr('x1', this.centerx + 200)
+        .attr('y1', this.centery)
+        .attr('x2', this.centerx + 500)
+        .attr('y2', this.centery)
+        .style('stroke', '#fff')
+        .style('stroke-width', '2px');
+
+      group.append('text')
+        .attr('x', this.centerx + 500)
+        .attr('dx', -150)
+        .attr('y', this.centery - 50)
+        .attr('class', 'circle-text')
+        .text(this.textFormat(total_selected_state_opioid));
+
+      group.append('text')
+        .attr('x', this.centerx + 500)
+        .attr('dx', -295)
+        .attr('y', this.centery - 20)
+        .attr('class', 'circle-text-general')
+        .text('of the total cost of drugs spent on opiods');
+
+      group.append('text')
+        .attr('x', this.centerx + 500)
+        .attr('dx', -295)
+        .attr('y', this.centery + 30)
+        .attr('class', 'circle-text-general')
+        .text(`Total Opioid Drug Costs: ${this.textFormat(total_opioid_drug_cost)}`);
+
+      group.append('text')
+        .attr('x', this.centerx + 500)
+        .attr('dx', -295)
+        .attr('y', this.centery + 60)
+        .attr('class', 'circle-text-general')
+        .text(`Total Long Acting Opioid Drug Costs: ${this.textFormat(total_la_opioid_drug_cost)}`);
 
       d3.selectAll('.random-circles .circle-ring')
           .classed('colored-circle', d => {
@@ -301,6 +428,7 @@ export default {
           });
     },
     drawRandomCircles: function() {
+      d3.select('.random-circles').remove();
       const group = this.svg.append('g').attr('class', 'random-circles');
 
       const gdata = group.selectAll('circle')
@@ -321,7 +449,9 @@ export default {
       this.drawTotalCostCircles();
       this.drawOpioidCircles();
 
+      d3.select('.circle-split-line').remove();
       this.svg.append('line')
+        .attr('class', 'circle-split-line')
         .attr('x1', this.centerx)
         .attr('y1', this.centery - 210)
         .attr('x2', this.centerx)
@@ -353,7 +483,7 @@ export default {
       font-size: 12px;
     }
   }
-  .year-axis {
+  .cost-year-axis {
       .highlighted {
         font-size: 16px !important;
         fill: #F8E368 !important;
@@ -376,7 +506,7 @@ export default {
   .internal-medicine {
     position: absolute;
     top: 120px;
-    left: 20%;
+    left: 15%;
     color: #fff;
     font-size: 20px;
     .cost-value {
@@ -447,6 +577,15 @@ export default {
     stroke: #F8E368;
     stroke-width: 3px;
     fill: #F8E368;
+  }
+  .circle-text {
+    fill: #F8E368;
+    font-size: 36px;
+    font-weight: bold;
+  }
+  .circle-text-general {
+    fill: #fff;
+    font-size: 16px;
   }
   .circle-ring {
     stroke: #fff;

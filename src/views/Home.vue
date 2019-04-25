@@ -1,8 +1,8 @@
 <template>
   <div class="home container-fluid">
     <!-- <img alt="Vue logo" src="../assets/logo.png"> -->
-    <Intro :title="introTitle" :desc="introDesc" :background="introBackground" />
-    <section class="row advert-section">
+    <Intro :title="introTitle" :desc="introDesc" :background="introBackground" ref="intro" />
+    <section class="row advert-section" ref="advert">
       <div class="col-6">
         <div class="row row-even" v-for="(advert, idx) of content" :key="idx" v-if="idx % 2 !== 0">
           <div class="col-11">
@@ -18,16 +18,18 @@
         </div>
       </div>
     </section>
-    <section class="row specialty-chart-section">
+    <section class="row specialty-chart-section" ref="specialty">
       <div class="col-12">
         <SpecialtyChart />
       </div>
     </section>
-    <section class="row cost-chart-section">
+    <section class="row cost-chart-section" ref="costchart">
       <div class="col-12">
         <CostChart />
       </div>
     </section>
+
+    <!-- <a v-on:click="scrollTo()" style="color: #fff">Scroll to #element</a> -->
 
     <!-- Modal Component -->
     <b-modal ref="image-modal" size="xl" hide-footer hide-header centered title="">
@@ -43,7 +45,7 @@
           </b-row>
           <b-row>
             <b-col cols="2">
-              <button class="modal-prev-btn" v-on:click="changeModalImage('prev')"><</button>
+              <button class="modal-prev-btn modal-nav-btn" v-on:click="changeModalImage('prev')"><</button>
             </b-col>
             <b-col cols="5" :key="index">
               <img class="img-fluid modal-img" :src="require('../assets/images/' + img.imagelink)"/>
@@ -52,7 +54,7 @@
               <p class="modal-img-desc">{{img.imagedesc}}</p>
             </b-col>
             <b-col cols="2">
-              <button class="modal-next-btn" v-on:click="changeModalImage('next')">></button>
+              <button class="modal-next-btn modal-nav-btn" v-on:click="changeModalImage('next')">></button>
             </b-col>
           </b-row>
         </template>
@@ -71,6 +73,7 @@
 <script>
 import CONFIG from '@/assets/content.json'
 import * as _ from 'lodash'
+import VueScrollTo from 'vue-scrollto'
 
 // @ is an alias to /src
 import HelloWorld from '@/components/HelloWorld.vue'
@@ -122,6 +125,10 @@ export default {
     },
     closeModal() {
       this.$refs['image-modal'].hide();
+    },
+    scrollTo() {
+      const element = this.$refs['intro']
+      const cancelScroll = this.$scrollTo(element)
     }
   },
   components: {
@@ -134,12 +141,29 @@ export default {
 }
 </script>
 <style lang="scss">
+  .heading {
+    font-family: 'Lora', serif;
+  }
+  .description {
+    font-family: 'Open Sans', sans-serif;
+  }
   .home {
     padding-left: 0px;
     padding-right: 0px;
     background-color: #000;
   }
+  .modal {
+      background-color: #000;
+  }
+  .modal-dialog {
+    position: absolute;
+    left: 20px;
+    top: 20px;
+  }
   .modal-content {
+    position: absolute !important;
+    top: 20px !important;
+    left: 20px !important;
     .modal-body {
       background-color: #000;
       color: #fff;
@@ -148,6 +172,13 @@ export default {
       }
       .modal-next-btn {
         display: inline-block;
+      }
+      .modal-nav-btn {
+        background-color: transparent;
+        color: #fff;
+        border: none;
+        font-size: 50px;
+        font-weight: bold;
       }
       .modal-img-desc {
         text-align: left;

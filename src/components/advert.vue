@@ -1,11 +1,11 @@
 <template>
   <section :class="['advert', 'advert-'+index]">
     <div class="heading-desc">
-      <h3>
+      <h3 class="advert-heading">
         <span>{{index}} .</span>
         {{title}}
       </h3>
-      <p>{{desc}}</p>
+      <p class="advert-desc">{{desc}}</p>
     </div>
     <div class="plus-button" v-on:click="showModal(index)">+</div>
     <template v-for="(img, idx) of content">
@@ -51,10 +51,14 @@ export default {
     margin-left: 30px;
     .heading-desc {
       height: 200px;
-      h3 {
+      .advert-heading {
+        font-family: 'Lora', serif;
         span {
           text-decoration: underline;
         }
+      }
+      .advert-desc {
+        font-family: 'Open Sans', sans-serif;
       }
     }
     .advert-img-container {

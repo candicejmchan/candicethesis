@@ -1,8 +1,8 @@
 <template>
   <div>
     <svg class="specialty-chart" ref="specialty"></svg>
-    <div class="internal-medicine">
-      Doctors working in
+    <div class="internal-medicine-spl description">
+      Among all the prescriptions by doctors working in
       <span class="selected-medicine dropdown-container">
         <b-nav-item-dropdown :text="selectedMed" right>
             <b-dropdown-item href="#" :key="index"
@@ -22,19 +22,14 @@
           </b-dropdown-item>
         </b-nav-item-dropdown>
       </span>
-      prescribe
-      <span class="num-prescriptions dropdown-container">
-        <b-nav-item-dropdown text="100000" right>
-            <b-dropdown-item href="#">EN</b-dropdown-item>
-            <b-dropdown-item href="#">ES</b-dropdown-item>
-            <b-dropdown-item href="#">RU</b-dropdown-item>
-            <b-dropdown-item href="#">FA</b-dropdown-item>
-        </b-nav-item-dropdown>
+      there were
+      <span class="opioid-claims">
+        {{opioidClaims}}
       </span>
-      opioid prescriptions
+      opioid claims
       per year
     </div>
-    <div class="opioid-text">
+    <div class="opioid-text description">
       Opiods made up
       <span class="prescription highlighted">28%</span>
       of total prescriptions for doctor
@@ -98,7 +93,9 @@ export default {
       height: HEIGHT - MARGIN.top - MARGIN.bottom,
       yscale: '',
       xscale: '',
-      yearScale: ''
+      yearScale: '',
+      textFormat: d3.format(',.0f'),
+      opioidClaims: ''
     }
   },
   mounted() {
@@ -117,8 +114,8 @@ export default {
 
       // chart heading
       this.svg.append('text')
-        .classed('specialty-chart-heading', true)
-        .attr('x', headingWidth)
+        .classed('specialty-chart-heading heading', true)
+        .attr('x', headingWidth - 30)
         .attr('y', HEADING_SHIFT)
         .text(heading);
 
@@ -145,7 +142,7 @@ export default {
     },
     addMeanPrescriptions() {
       const g = this.svg.append('g')
-        .classed('mean-prescriptions', true)
+        .classed('mean-prescriptions description', true)
         .attr('transform', `translate(${headingWidth + 150}, ${SUB_HEADING_SHIFT - 40})`);
 
       g.append('text').text('Mean Rate of Prescriptions by opioid type');
@@ -180,7 +177,7 @@ export default {
     addYearAxis() {
       const axis = d3.axisBottom(this.yearScale);
       const g = this.chartg.append('g')
-        .attr('class', 'year-axis axis')
+        .attr('class', 'specialty-year-axis axis')
         .attr('transform', `translate(0, ${this.height - (MARGIN.top + SUB_HEADING_SHIFT - 30)})`)
         .call(axis)
 
@@ -192,7 +189,7 @@ export default {
 
       const self = this;
 
-      d3.selectAll('.tick text')
+      d3.selectAll('.specialty-year-axis .tick text')
         .classed('highlighted', function(d) {
           const year = +d3.select(this).text();
           if(year === INITYEAR) {
@@ -203,7 +200,7 @@ export default {
         })
         .on('click', function(d) {
           self.year = +d3.select(this).text();
-          d3.selectAll('.tick text').classed('highlighted', false)
+          d3.selectAll('.specialty-year-axis .tick text').classed('highlighted', false)
           d3.select(this).classed('highlighted', true)
           self.changeYearData();
           self.drawChart();
@@ -295,6 +292,10 @@ export default {
       const data = this.filterData()
       const numFormat = d3.format('.0%');
 
+      console.log(_.map(data, 'opioid_claim_count'))
+      const totalOpioidClaimCount = _.reduce(data, (sum, a) => sum + (a.opioid_claim_count || 0),0)
+      this.opioidClaims = this.textFormat(totalOpioidClaimCount);
+
       const la = d3.sum(data, d => d.la_opioid_prescriber_rate) / data.length
       const op = d3.sum(data, d => d.opioid_prescriber_rate) / data.length
 
@@ -328,8 +329,7 @@ export default {
         d3.select('.opioid-text .prescription').text(numFormat(total/100));
         const name = _.startCase(_.toLower(`${d.nppes_provider_first_name} ${d.nppes_provider_last_org_name}`));
         d3.select('.opioid-text .doctor').text(name);
-        d3.select('.opioid-text .state').text(STATES[d.nppes_provider_state])
-        console.log(total);
+        d3.select('.opioid-text .state').text(STATES[d.nppes_provider_state]);
       })
 
       group.on('mouseleave', function(d){
@@ -402,7 +402,7 @@ export default {
       font-size: 12px;
     }
   }
-  .year-axis {
+  .specialty-year-axis {
       .highlighted {
         font-size: 16px !important;
         fill: #F8E368 !important;
@@ -412,20 +412,23 @@ export default {
   .opioid-text {
     display: none;
     position: absolute;
-    top: 200px;
-    left: 25%;
+    top: 180px !important;
+    left: 22% !important;
     color: #fff;
     font-size: 20px;
+    border-radius: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
     background-color: grey;
     .highlighted {
       color: #F8E368;
       font-weight: bold;
     }
   }
-  .internal-medicine {
+  .internal-medicine-spl {
     position: absolute;
     top: 120px;
-    left: 20%;
+    left: 9%;
     color: #fff;
     font-size: 20px;
     .dropdown-container {
@@ -468,6 +471,10 @@ export default {
     .opioid-value {
       display: none;
     }
+  }
+  .opioid-claims {
+    color: #F8E368;
+    font-weight: bold;
   }
   .faded {
     opacity: 0.3;

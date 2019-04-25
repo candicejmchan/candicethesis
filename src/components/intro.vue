@@ -55,6 +55,7 @@ export default {
   .intro {
     background-color: #000;
     .intro-title {
+        font-family: 'Lora', serif;
         color: #fff;
         font-size: 40px;
         margin-top: 20px;
@@ -62,6 +63,7 @@ export default {
         margin-left: 30px;
     }
     .intro-desc {
+        font-family: 'Open Sans', sans-serif;
         color: #fff;
         font-size: 20px;
         text-align:left;
