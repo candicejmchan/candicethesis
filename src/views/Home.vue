@@ -28,6 +28,20 @@
         <CostChart />
       </div>
     </section>
+    <section>
+      <div class="row">
+        <div class="col-12">
+          <div class="quote">
+            <p class="quote-text">
+              “ In your mind, you can be O.K.; you can just do one. But one too many, and a thousand is never enough.“
+            </p>
+            <p class="quote-author">- Bruce Cherry, 58, Pennsylvania</p>
+          </div>
+          <img alt="yellow smoke" class="black-yellow-smoke img-fluid"
+               src="../assets/images/black_and_yellow_smoke.png"/>
+        </div>
+      </div>
+    </section>
 
     <!-- <a v-on:click="scrollTo()" style="color: #fff">Scroll to #element</a> -->
 
@@ -203,5 +217,19 @@ export default {
       margin-top: 200px;
     }
   }
+
+  .black-yellow-smoke {
+    width: 100%;
+    opacity:0.5;
+  }
+  .quote {
+    font-family: 'Open Sans', sans-serif;
+    color: #fff;
+    position: absolute;
+    top: 440px;
+    left: 18%;
+    font-size: 25px;
+    width: 70%;
+  }  
 
 </style>

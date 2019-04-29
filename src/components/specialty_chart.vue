@@ -27,7 +27,16 @@
         {{opioidClaims}}
       </span>
       opioid claims
-      per year
+      in year
+      <span class="selected-year dropdown-container">
+        <b-nav-item-dropdown :text="year" right>
+          <b-dropdown-item href="#" :key="index"
+              v-on:click="selectYear(y)"
+              v-for="(y, index) of years">
+              {{y}}
+          </b-dropdown-item>
+        </b-nav-item-dropdown>
+      </span>
     </div>
     <div class="opioid-text description">
       Opiods made up
@@ -49,8 +58,9 @@ import data_2013 from '@/assets/data/2013.json'
 import data_2014 from '@/assets/data/2014.json'
 import data_2015 from '@/assets/data/2015.json'
 import data_2016 from '@/assets/data/2016.json'
-
 import STATES from '@/assets/states.json'
+
+import SpecialtyUtils from '@/utils/specialty_utils'
 
 // init chart constants
 const WIDTH = 1200
@@ -75,12 +85,15 @@ const INITYEAR = 2013
 const DATA_RANGE = 45
 const YEARS = _.range(2013, 2017)
 
+const specialtyutils = new SpecialtyUtils(MARGIN);
+
 // chart vue code
 export default {
   name: 'SpecialtyChart',
   data: () => {
     return {
       year: INITYEAR,
+      years: YEARS,
       data: [],
       internalMeds: [],
       states: [],
@@ -95,15 +108,17 @@ export default {
       xscale: '',
       yearScale: '',
       textFormat: d3.format(',.0f'),
-      opioidClaims: ''
+      opioidClaims: '',
+      drag: '',
+      startSlice: 0
     }
   },
   mounted() {
       this.changeYearData();
       this.svgElement = this.$refs.specialty;
       this.initChart();
-      this.drawChart();
-      this.addYearAxis();
+      this.drawChart(this.filterData());
+      // this.addYearAxis();
       this.addYaxis();
   },
   methods: {
@@ -111,6 +126,43 @@ export default {
       this.svg = d3.select(this.svgElement)
         .attr('width', WIDTH)
         .attr('height', HEIGHT)
+
+      // x scale
+      this.xscale = d3.scalePoint()
+        .range([0, this.width])
+        .domain(_.range(0, DATA_RANGE))
+
+      // y scale. shift height due to heading and sub heading
+      this.yscale = d3.scaleLinear()
+        .range([this.height - (MARGIN.top + SUB_HEADING_SHIFT), 0])
+        .domain([0, 100])
+
+      this.yearScale = d3.scalePoint()
+        .range([0.2 * this.width, 0.8 * this.width])
+        .domain(YEARS)
+
+      this.drag = d3.drag()
+        .on('start', () => {
+          specialtyutils.dragStart(this.xscale)
+        })
+        .on('drag', () => {
+          const obj = specialtyutils.dragMove(this.xscale);
+          console.log(obj);
+          this.startSlice = obj.direction === 'left' ?
+              this.startSlice + obj.diff :
+              this.startSlice - obj.diff;
+          this.drawChart(this.filterData());
+        })
+        .on('end', () => {
+          specialtyutils.dragEnd(this.xscale)
+        })
+
+      this.svg.append('rect')
+      .attr('x', MARGIN.left)
+      .attr('width', WIDTH - MARGIN.left - MARGIN.right)
+      .attr('height', HEIGHT)
+      .attr('class', 'scroll-rect')
+      .call(this.drag);
 
       // chart heading
       this.svg.append('text')
@@ -126,19 +178,6 @@ export default {
         .append('g')
         .attr('transform', `translate(${MARGIN.left}, ${MARGIN.top + SUB_HEADING_SHIFT})`)
 
-      // x scale
-      this.xscale = d3.scalePoint()
-        .range([0, this.width])
-        .domain(_.range(0, DATA_RANGE))
-
-      // y scale. shift height due to heading and sub heading
-      this.yscale = d3.scaleLinear()
-        .range([this.height - (MARGIN.top + SUB_HEADING_SHIFT), 0])
-        .domain([0, 100])
-
-      this.yearScale = d3.scalePoint()
-        .range([0.2 * this.width, 0.8 * this.width])
-        .domain(YEARS)
     },
     addMeanPrescriptions() {
       const g = this.svg.append('g')
@@ -149,7 +188,7 @@ export default {
 
       const data = [
         {color: '#fff', label: 'Long Acting Opioids', class: 'la-opioids', value: '20%'},
-        {color: '#F8E368', label: 'Opioids', class: 'opioids', value: '12%'}
+        {color: '#F8E368', label: 'Standard Opioids', class: 'opioids', value: '12%'}
       ];
 
       const group = g.selectAll('g')
@@ -203,7 +242,9 @@ export default {
           d3.selectAll('.specialty-year-axis .tick text').classed('highlighted', false)
           d3.select(this).classed('highlighted', true)
           self.changeYearData();
-          self.drawChart();
+          self.startSlice = 0;
+          const data = self.filterData()
+          self.drawChart(data);
         });
     },
     addYaxis() {
@@ -221,13 +262,24 @@ export default {
             .text("Opioids as a Percentage of Total Prescriptions");
 
     },
+    selectYear(y) {
+      this.year = y;
+      this.changeYearData();
+      this.startSlice = 0;
+      const data = this.filterData()
+      this.drawChart(data);
+    },
     selectState(state) {
       this.selectedState = state; //{ state: state, name: STATES[state] };
-      this.drawChart();
+      this.startSlice = 0;
+      const data = this.filterData()
+      this.drawChart(data);
     },
     selectMedicine(med) {
       this.selectedMed = med;
-      this.drawChart();
+      this.startSlice = 0;
+      const data = this.filterData()
+      this.drawChart(data);
     },
     changeYearData() {
       this.data = DATA[this.year];
@@ -268,36 +320,39 @@ export default {
               d[key] = typeof +d[key] === 'undefined' || isNaN(+d[key]) ? d[key] : +d[key];
             })
             if(typeof d.la_opioid_prescriber_rate === 'undefined') {
-              d.la_opioid_prescriber_rate = 0
+              d.la_opioid_prescriber_rate = 0;
             }
             if(typeof d.opioid_prescriber_rate === 'undefined') {
-              d.opioid_prescriber_rate = 0
+              d.opioid_prescriber_rate = 0;
             }
+            d.lowest = d.la_opioid_prescriber_rate <= d.opioid_prescriber_rate ?
+              d.la_opioid_prescriber_rate : d.opioid_prescriber_rate;
+            d.showOpioid = d.la_opioid_prescriber_rate > d.opioid_prescriber_rate ?
+              true : false;
+            d.lowest -= 10;
+            d.total_opioid = d.la_opioid_prescriber_rate + d.opioid_prescriber_rate;
+            d.showTotal = d.la_opioid_prescriber_rate === 0 || d.opioid_prescriber_rate === 0 ?
+              false : true;
             return d
           })
           // make it descending
           .reverse()
           // remove undefined / 0 values
           .filter(d => !(d.la_opioid_prescriber_rate === 0 && d.opioid_prescriber_rate === 0))
-          // .filter(d => typeof d.la_opioid_prescriber_rate !== 'undefined' &&
-          //             typeof d.opioid_prescriber_rate !== 'undefined') // &&
-                      // d.opioid_prescriber_rate !== 0 &&
-                      // d.la_opioid_prescriber_rate !== 0)
-          .slice(0, DATA_RANGE)
           .value()
 
       return filtered
     },
-    drawChart: function() {
-      const data = this.filterData()
+    drawChart: function(allData) {
       const numFormat = d3.format('.0%');
+      const data = _.slice(allData, this.startSlice, this.startSlice + DATA_RANGE);
 
       console.log(_.map(data, 'opioid_claim_count'))
       const totalOpioidClaimCount = _.reduce(data, (sum, a) => sum + (a.opioid_claim_count || 0),0)
       this.opioidClaims = this.textFormat(totalOpioidClaimCount);
 
-      const la = d3.sum(data, d => d.la_opioid_prescriber_rate) / data.length
-      const op = d3.sum(data, d => d.opioid_prescriber_rate) / data.length
+      const la = d3.sum(allData, d => d.la_opioid_prescriber_rate) / allData.length
+      const op = d3.sum(allData, d => d.opioid_prescriber_rate) / allData.length
 
       d3.select('.mean-prescriptions .la-opioids')
         .text(numFormat(la/100));
@@ -318,66 +373,159 @@ export default {
           return `translate(${this.xscale(i)}, 0)`
         })
 
+      // on hover
       group.on('mouseenter', function(d){
+        const total = (d.opioid_prescriber_rate || 0) +
+          (d.la_opioid_prescriber_rate || 0);
+        const name = _.startCase(_.toLower(
+          `${d.nppes_provider_first_name} ${d.nppes_provider_last_org_name}`
+        ));
+
+        // hide all balls and show the hovered ones
         d3.selectAll('.ball-group').classed('faded', true);
         d3.selectAll('.ball-group').classed('highlighted', false);
         d3.select(this).classed('faded', false);
         d3.select(this).classed('highlighted', true);
-        const total = (d.opioid_prescriber_rate || 0) + (d.la_opioid_prescriber_rate || 0)
-        d3.select('.opioid-text')
-          .classed('visible', true);
+        // d3.select('.opioid-prescriber-line').classed('show-hover', true);
+
+        // change the value in the hovered text
+        d3.select('.opioid-text').classed('show-hover', true);
         d3.select('.opioid-text .prescription').text(numFormat(total/100));
-        const name = _.startCase(_.toLower(`${d.nppes_provider_first_name} ${d.nppes_provider_last_org_name}`));
+
+        // change the name in the hovered text
         d3.select('.opioid-text .doctor').text(name);
         d3.select('.opioid-text .state').text(STATES[d.nppes_provider_state]);
-      })
+      });
 
+      // on hover leave
       group.on('mouseleave', function(d){
         d3.selectAll('.ball-group').classed('faded', false);
         d3.selectAll('.ball-group').classed('highlighted', false);
-        d3.select('.opioid-text').classed('visible', false);
-      })
-
-      // opioid_prescriber_rate circle
-      group.append('circle')
-        .filter(d => d.opioid_prescriber_rate !== 0)
-        .attr('r', 5)
-        .attr('cy', d => {
-          const yval = this.yscale(d.opioid_prescriber_rate)
-          return yval;
-        })
-        .classed('opioid-prescriber-rate', true);
-
-      // opioid_prescriber_rate text
-      group.append('text')
-        .filter(d => d.opioid_prescriber_rate !== 0)
-        .attr('x', 10)
-        .attr('y', d => this.yscale(d.opioid_prescriber_rate))
-        .classed('opioid-prescriber-rate opioid-value', true)
-        .text(d => numFormat(d.opioid_prescriber_rate/100))
-
-      // opioid_prescriber_rate circle
-      group.append('circle')
-        .filter(d => d.la_opioid_prescriber_rate !== 0)
-        .attr('r', 5)
-        .attr('cy', d => this.yscale(d.la_opioid_prescriber_rate))
-        .classed('la-opioid-prescriber-rate', true);
-
-      // opioid_prescriber_rate text
-      group.append('text')
-        .filter(d => d.la_opioid_prescriber_rate !== 0)
-        .attr('x', 10)
-        .attr('y', d => this.yscale(d.la_opioid_prescriber_rate))
-        .classed('la-opioid-prescriber-rate opioid-value', true)
-        .text(d => numFormat(d.la_opioid_prescriber_rate/100))
+        d3.select('.opioid-text').classed('show-hover', false);
+        d3.select('.opioid-prescriber-line').classed('show-hover', false);
+      });
 
       // white line joining the circles
       group.append('line')
           .filter(d => d.la_opioid_prescriber_rate !== 0)
           .attr('r', 5)
-          .attr('y1', d => this.yscale(d.opioid_prescriber_rate))
-          .attr('y2', d => this.yscale(d.la_opioid_prescriber_rate))
-          .classed('opioid-prescriber-line', true);
+          .attr('y1', d => this.yscale(d.total_opioid))
+          .attr('y2', d => this.yscale(0))
+          .classed('opioid-prescriber-line opioid-value', true);
+
+      // opioid_prescriber_rate circle
+      group.append('circle')
+        .filter(d => {
+          return (d.opioid_prescriber_rate !== 0) && (d.showOpioid || !d.showTotal);
+        })
+        .attr('r', 5)
+        .attr('cy', d => {
+          const yval = this.yscale(d.opioid_prescriber_rate)
+          return yval;
+        })
+        .classed('opioid-prescriber-rate', true)
+        .classed('opioid-value', d => {
+          return d.showTotal ? true : false;
+        });
+
+      group.append('rect')
+        .filter(d => d.opioid_prescriber_rate !== 0)
+        .attr('width', 40)
+        .attr('height', 20)
+        .attr('x', -12) // -8
+        .attr('y', d => {
+          if(d.showOpioid || !d.showTotal){
+            let val = d.opioid_prescriber_rate / 2;
+            val = val <= 10 ? 0 : val;
+            return this.yscale(val) - 14;
+          } else {
+            const val1 = (d.total_opioid - d.la_opioid_prescriber_rate) / 2;
+            const val2 = d.la_opioid_prescriber_rate + val1;
+            return this.yscale(val2) - 14;
+          }
+        })
+        .classed('opioid-prescriber-rate-box opioid-value', true);
+
+      // opioid_prescriber_rate text
+      group.append('text')
+        .filter(d => d.opioid_prescriber_rate !== 0)
+        .attr('x', -8)
+        .attr('y', d => {
+          if(d.showOpioid || !d.showTotal){
+            let val = d.opioid_prescriber_rate / 2;
+            val = val <= 10 ? 0 : val;
+            return this.yscale(val);
+          } else {
+            const val1 = (d.total_opioid - d.la_opioid_prescriber_rate) / 2;
+            const val2 = d.la_opioid_prescriber_rate + val1;
+            return this.yscale(val2);
+          }
+        })
+        .classed('opioid-prescriber-rate opioid-value', true)
+        .text(d => numFormat(d.opioid_prescriber_rate/100))
+
+      // opioid_prescriber_rate circle. when lowest
+      group.append('circle')
+        .filter(d => {
+          return (d.la_opioid_prescriber_rate !== 0) && (!d.showOpioid || !d.showTotal);
+        })
+        .attr('r', 5)
+        .attr('cy', d => this.yscale(d.la_opioid_prescriber_rate))
+        .classed('la-opioid-prescriber-rate', true)
+        .classed('opioid-value', d => {
+          return d.showTotal ? true : false;
+        })
+
+      group.append('rect')
+        .filter(d => d.la_opioid_prescriber_rate !== 0)
+        .attr('width', 40)
+        .attr('height', 20)
+        .attr('x', -12) // -8
+        .attr('y', d => {
+          if(!d.showOpioid || !d.showTotal){
+            let val = d.la_opioid_prescriber_rate / 2;
+            val = val <= 10 ? 0 : val;
+            return this.yscale(val) - 14;
+          } else {
+            const val1 = (d.total_opioid - d.opioid_prescriber_rate) / 2;
+            const val2 = d.opioid_prescriber_rate + val1;
+            // console.log(d.total_opioid, d.la_opioid_prescriber_rate, val1, val2);
+            return this.yscale(val2) - 14;
+          }
+        })
+        .classed('opioid-prescriber-rate-box opioid-value', true);
+
+      // opioid_prescriber_rate text
+      group.append('text')
+        .filter(d => d.la_opioid_prescriber_rate !== 0)
+        .attr('x', -8)
+        .attr('y', d => {
+          if(!d.showOpioid || !d.showTotal){
+            let val = d.la_opioid_prescriber_rate / 2;
+            val = val <= 10 ? 0 : val;
+            return this.yscale(val);
+          } else {
+            const val1 = (d.total_opioid - d.opioid_prescriber_rate) / 2;
+            const val2 = d.opioid_prescriber_rate + val1;
+            // console.log(d.total_opioid, d.la_opioid_prescriber_rate, val1, val2);
+            return this.yscale(val2);
+          }
+        })
+        .classed('la-opioid-prescriber-rate opioid-value', true)
+        .text(d => numFormat(d.la_opioid_prescriber_rate/100))
+
+      const totalCircle = group.append('g')
+        .filter(d => d.showTotal)
+        .attr('class', 'total-opioid')
+        .attr('transform', d => `translate(0, ${this.yscale(d.total_opioid)})`)
+
+      totalCircle.append('circle')
+        .attr('r', 5)
+        .classed('center-circle', true);
+
+      totalCircle.append('circle')
+        .attr('r', 8)
+        .classed('surrounding-circle', true);
     }
   }
 }
@@ -390,7 +538,7 @@ export default {
       text {
         fill: #fff;
         cursor: pointer;
-        font-size: 12px;
+        font-size: 14px;
       }
     }
     path {
@@ -399,7 +547,7 @@ export default {
     .axis-label {
       fill: #fff;
       text-anchor: middle;
-      font-size: 12px;
+      font-size: 14px;
     }
   }
   .specialty-year-axis {
@@ -448,6 +596,17 @@ export default {
       }
     }
   }
+  .total-opioid {
+    .center-circle {
+      fill: #F8E368;
+      stroke: none;
+    }
+    .surrounding-circle {
+      stroke: #fff;
+      fill: none;
+      stroke-width: 2px;
+    }
+  }
   .specialty-chart-heading {
     font-size: 40px;
     fill: #F8E368;
@@ -460,6 +619,10 @@ export default {
     cursor: pointer;
     .opioid-prescriber-rate {
       fill: #F8E368
+    }
+    .opioid-prescriber-rate-box {
+      fill: #000;
+      stroke: none;
     }
     .la-opioid-prescriber-rate {
       fill: #fff;
@@ -479,8 +642,8 @@ export default {
   .faded {
     opacity: 0.3;
   }
-  .visible {
-    display: block;
+  .show-hover {
+    display: block !important;
   }
   .highlighted {
     .opioid-value {
@@ -489,5 +652,9 @@ export default {
   }
   .mean-prescriptions {
     fill:#fff;
+  }
+  .scroll-rect {
+    fill: transparent;
+    stroke: none;
   }
 </style>
