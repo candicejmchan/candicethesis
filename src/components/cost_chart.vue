@@ -193,7 +193,7 @@ export default {
       this.internalMeds = chainData
           .map('specialty_description')
           .uniq()
-          .concat('All')
+          .concat('all fields')
           .sortBy()
           .value()
 
@@ -214,7 +214,7 @@ export default {
     },
     drawTotalCostCircles: function(){
       const total_all_states = _.chain(this.data)
-        .filter(d => d.specialty_description === this.selectedMed || this.selectedMed === 'All')
+        .filter(d => d.specialty_description === this.selectedMed || this.selectedMed === 'all fields')
         .map(d => +d['total_drug_cost'] || 0)
         .reduce( (sum, d) => d + sum)
         .value();
@@ -224,7 +224,7 @@ export default {
             return (
               (
                 (d.specialty_description === this.selectedMed) ||
-                (this.selectedMed === 'All')
+                (this.selectedMed === 'all fields')
               ) &&
               ((d.nppes_provider_state === this.selectedState.state) ||
               (this.selectedState.state === 'ALL'))
@@ -316,7 +316,7 @@ export default {
     },
     drawOpioidCircles: function() {
       const total_all_states_opioid = _.chain(this.data)
-        .filter(d => d.specialty_description === this.selectedMed || this.selectedMed === 'All')
+        .filter(d => d.specialty_description === this.selectedMed || this.selectedMed === 'all fields')
         .map(d => {
           return (+d.opioid_drug_cost || 0) + (+d.la_opioid_drug_cost || 0)
         })
@@ -328,7 +328,7 @@ export default {
             return (
               (
                 (d.specialty_description === this.selectedMed) ||
-                (this.selectedMed === 'All')
+                (this.selectedMed === 'all fields')
               ) &&
               ((d.nppes_provider_state === this.selectedState.state) ||
               (this.selectedState.state === 'ALL'))
@@ -507,6 +507,7 @@ export default {
     position: absolute;
     top: 120px;
     left: 15%;
+    width: 70%;
     color: #fff;
     font-size: 20px;
     .cost-value {

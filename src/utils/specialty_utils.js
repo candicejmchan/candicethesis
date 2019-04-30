@@ -9,6 +9,10 @@ class SpecialtyUtils {
     this.xEnd = 0;
   }
 
+  createMeanText(la_opiod, opioid) {
+    return `The Mean Rate of Prescriptions for Long Acting Opioids is ${la_opiod} and Standard Opioid is ${opioid}`;
+  }
+
   xPositionValue(xScale) {
       const xPos = d3.event.x - this.margin.left;
       const domain = xScale.domain();

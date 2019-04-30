@@ -182,20 +182,29 @@ export default {
     addMeanPrescriptions() {
       const g = this.svg.append('g')
         .classed('mean-prescriptions description', true)
-        .attr('transform', `translate(${headingWidth + 150}, ${SUB_HEADING_SHIFT - 40})`);
+        .attr('transform', `translate(${headingWidth + 130}, ${SUB_HEADING_SHIFT - 20})`);
 
-      g.append('text').text('Mean Rate of Prescriptions by opioid type');
+      //g.append('text').text('Mean Rate of Prescriptions by opioid type');
 
       const data = [
         {color: '#fff', label: 'Long Acting Opioids', class: 'la-opioids', value: '20%'},
         {color: '#F8E368', label: 'Standard Opioids', class: 'opioids', value: '12%'}
       ];
 
+      const gLower = this.svg.append('g')
+        .classed('mean-prescriptions description description-lower', true)
+        .attr('transform', `translate(${headingWidth - 50 + 1}, ${HEIGHT - 70})`);
+
+      gLower.append('text')
+          .attr('class', 'sentence')
+          .text(specialtyutils.createMeanText(0, 0));
+
       const group = g.selectAll('g')
         .data(data).enter()
         .append('g')
         .attr('class', d => d.class + '_group')
-        .attr('transform', (d, i) => `translate(0, ${i * 30 + 30})`);
+        // .attr('transform', (d, i) => `translate(0, ${i * 30 + 30})`);
+        .attr('transform', (d, i) => `translate(${i * 200 + 30}, 0)`);
 
       group.append('circle')
         .attr('r', 5)
@@ -207,11 +216,11 @@ export default {
         .attr('y', 5)
         .text(d => d.label);
 
-      group.append('text')
-        .attr('class', d => d.class)
-        .attr('x', 200)
-        .attr('y', 5)
-        .text(d => d.value)
+      // group.append('text')
+      //   .attr('class', d => d.class)
+      //   .attr('x', 200)
+      //   .attr('y', 5)
+      //   .text(d => d.value)
     },
     addYearAxis() {
       const axis = d3.axisBottom(this.yearScale);
@@ -258,7 +267,7 @@ export default {
             .attr("transform", "rotate(-90)")
             .attr("y", -50)
             .attr("x", -200)
-            .attr('class', 'axis-label')
+            .attr('class', 'axis-label description')
             .text("Opioids as a Percentage of Total Prescriptions");
 
     },
@@ -287,7 +296,7 @@ export default {
 
       this.internalMeds = chainData.map('specialty_description')
           .uniq()
-          .concat('All')
+          .concat('all fields')
           .sortBy()
           .value()
 
@@ -302,12 +311,12 @@ export default {
       if(_.keys(this.selectedState).length === 0)
         this.selectedState = this.states.filter(d => d.state === 'ALL')[0]
       if(this.selectedMed === '')
-        this.selectedMed = this.internalMeds.filter(d => d === 'All')[0]
+        this.selectedMed = this.internalMeds.filter(d => d === 'all fields')[0]
     },
     filterData: function() {
       // filter the data to get the relevant dataset
       const filtered = _.chain(this.data)
-          .filter(d => (this.selectedMed === 'All' ||
+          .filter(d => (this.selectedMed === 'all fields' ||
                 d.specialty_description === this.selectedMed) &&
               (this.selectedState.state === 'ALL' ||
                 d.nppes_provider_state === this.selectedState.state)
@@ -357,8 +366,11 @@ export default {
       d3.select('.mean-prescriptions .la-opioids')
         .text(numFormat(la/100));
 
-        d3.select('.mean-prescriptions .opioids')
-          .text(numFormat(op/100));
+      d3.select('.mean-prescriptions .opioids')
+        .text(numFormat(op/100));
+
+      d3.selectAll('.description-lower').select('.sentence')
+        .text(specialtyutils.createMeanText(numFormat(la/100), numFormat(op/100)));
 
       const gdata = this.chartg.selectAll('.ball-group')
         .data(data, (d, i) => this.year + d.specialty_description + i + d.nppes_provider_state)
@@ -407,11 +419,49 @@ export default {
 
       // white line joining the circles
       group.append('line')
-          .filter(d => d.la_opioid_prescriber_rate !== 0)
-          .attr('r', 5)
+          .filter(d => {
+            return (d.opioid_prescriber_rate !== 0) && (d.showOpioid || !d.showTotal);
+          })
           .attr('y1', d => this.yscale(d.total_opioid))
+          .attr('y2', d => {
+              return this.yscale(d.opioid_prescriber_rate)
+          })
+          .classed('opioid-prescriber-line opioid-value', true)
+          .classed('white-line', true)
+
+      group.append('line')
+          .filter(d => {
+            return (d.opioid_prescriber_rate !== 0) && (d.showOpioid || !d.showTotal);
+          })
+          .attr('y1', d => {
+              return this.yscale(d.opioid_prescriber_rate)
+          })
           .attr('y2', d => this.yscale(0))
-          .classed('opioid-prescriber-line opioid-value', true);
+          .classed('opioid-prescriber-line opioid-value', true)
+          .classed('yellow-line', true)
+
+
+          group.append('line')
+              .filter(d => {
+                return (d.la_opioid_prescriber_rate !== 0) && (!d.showOpioid || !d.showTotal);
+              })
+              .attr('y1', d => this.yscale(d.total_opioid))
+              .attr('y2', d => {
+                return this.yscale(d.la_opioid_prescriber_rate);
+              })
+              .classed('opioid-prescriber-line opioid-value', true)
+              .classed('yellow-line', true)
+
+          group.append('line')
+              .filter(d => {
+                return (d.la_opioid_prescriber_rate !== 0) && (!d.showOpioid || !d.showTotal);
+              })
+              .attr('y1', d => {
+                return this.yscale(d.la_opioid_prescriber_rate);
+              })
+              .attr('y2', d => this.yscale(0))
+              .classed('opioid-prescriber-line opioid-value', true)
+              .classed('white-line', true)
 
       // opioid_prescriber_rate circle
       group.append('circle')
@@ -560,8 +610,8 @@ export default {
   .opioid-text {
     display: none;
     position: absolute;
-    top: 180px !important;
-    left: 22% !important;
+    top: 220px !important;
+    left: 28% !important;
     color: #fff;
     font-size: 20px;
     border-radius: 5px;
@@ -576,7 +626,8 @@ export default {
   .internal-medicine-spl {
     position: absolute;
     top: 120px;
-    left: 9%;
+    left: 12%;
+    width:80%;
     color: #fff;
     font-size: 20px;
     .dropdown-container {
@@ -652,9 +703,20 @@ export default {
   }
   .mean-prescriptions {
     fill:#fff;
+    .sentence {
+      font-size: 20px;
+    }
   }
   .scroll-rect {
     fill: transparent;
     stroke: none;
+  }
+  .yellow-line {
+    stroke: #F8E368 !important;
+    stroke-width: 3px;
+  }
+  .white-line {
+    stroke: #ffffff !important;
+    stroke-width: 3px;
   }
 </style>
