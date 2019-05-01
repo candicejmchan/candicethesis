@@ -29,7 +29,7 @@
       opioid claims
       in year
       <span class="selected-year dropdown-container">
-        <b-nav-item-dropdown :text="year" right>
+        <b-nav-item-dropdown :text="year.toString()" right>
           <b-dropdown-item href="#" :key="index"
               v-on:click="selectYear(y)"
               v-for="(y, index) of years">
@@ -147,10 +147,10 @@ export default {
         })
         .on('drag', () => {
           const obj = specialtyutils.dragMove(this.xscale);
-          console.log(obj);
           this.startSlice = obj.direction === 'left' ?
               this.startSlice + obj.diff :
               this.startSlice - obj.diff;
+          this.startSlice = this.startSlice <= 0 ? 0 : this.startSlice;
           this.drawChart(this.filterData());
         })
         .on('end', () => {
@@ -197,7 +197,24 @@ export default {
 
       gLower.append('text')
           .attr('class', 'sentence')
-          .text(specialtyutils.createMeanText(0, 0));
+          .text('The Mean Rate of Prescriptions for Long Acting Opioids is');
+          //.text(specialtyutils.createMeanText(0, 0));
+
+      gLower.append('text')
+          .attr('x', 550)
+          .attr('class', 'sentence sentence-la-opioid')
+          .text('000');
+
+      gLower.append('text')
+          .attr('x', 590)
+          .attr('class', 'sentence')
+          .text('and Standard Opioid is');
+
+      gLower.append('text')
+          .attr('x', 810)
+          .attr('class', 'sentence sentence-opioid')
+          .text('000');
+
 
       const group = g.selectAll('g')
         .data(data).enter()
@@ -259,7 +276,7 @@ export default {
     addYaxis() {
       const axis = d3.axisLeft(this.yscale);
       const g = this.chartg.append('g')
-        .attr('class', 'y-axis axis')
+        .attr('class', 'y-axis')
         .attr('transform', `translate(-20, 0)`)
         .call(axis)
 
@@ -354,10 +371,11 @@ export default {
     },
     drawChart: function(allData) {
       const numFormat = d3.format('.0%');
-      const data = _.slice(allData, this.startSlice, this.startSlice + DATA_RANGE);
+      let endSlice = this.startSlice + DATA_RANGE;
+      endSlice = endSlice > allData.lengt ? allData.length : endSlice;
+      const data = _.slice(allData, this.startSlice, endSlice);
 
-      console.log(_.map(data, 'opioid_claim_count'))
-      const totalOpioidClaimCount = _.reduce(data, (sum, a) => sum + (a.opioid_claim_count || 0),0)
+      const totalOpioidClaimCount = _.reduce(allData, (sum, a) => sum + (a.opioid_claim_count || 0),0)
       this.opioidClaims = this.textFormat(totalOpioidClaimCount);
 
       const la = d3.sum(allData, d => d.la_opioid_prescriber_rate) / allData.length
@@ -369,11 +387,18 @@ export default {
       d3.select('.mean-prescriptions .opioids')
         .text(numFormat(op/100));
 
-      d3.selectAll('.description-lower').select('.sentence')
-        .text(specialtyutils.createMeanText(numFormat(la/100), numFormat(op/100)));
+      d3.selectAll('.description-lower')
+        .select('.sentence-la-opioid')
+        .text(numFormat(la/100));
+
+      d3.selectAll('.description-lower')
+        .select('.sentence-opioid')
+        .text(numFormat(op/100));
 
       const gdata = this.chartg.selectAll('.ball-group')
-        .data(data, (d, i) => this.year + d.specialty_description + i + d.nppes_provider_state)
+        .data(data, (d, i) => {
+          return i + d.opioid_prescriber_rate + d.la_opioid_prescriber_rate;
+        })
 
       gdata.exit().remove();
 
@@ -440,28 +465,27 @@ export default {
           .classed('opioid-prescriber-line opioid-value', true)
           .classed('yellow-line', true)
 
+      group.append('line')
+          .filter(d => {
+            return (d.la_opioid_prescriber_rate !== 0) && (!d.showOpioid || !d.showTotal);
+          })
+          .attr('y1', d => this.yscale(d.total_opioid))
+          .attr('y2', d => {
+            return this.yscale(d.la_opioid_prescriber_rate);
+          })
+          .classed('opioid-prescriber-line opioid-value', true)
+          .classed('yellow-line', true)
 
-          group.append('line')
-              .filter(d => {
-                return (d.la_opioid_prescriber_rate !== 0) && (!d.showOpioid || !d.showTotal);
-              })
-              .attr('y1', d => this.yscale(d.total_opioid))
-              .attr('y2', d => {
-                return this.yscale(d.la_opioid_prescriber_rate);
-              })
-              .classed('opioid-prescriber-line opioid-value', true)
-              .classed('yellow-line', true)
-
-          group.append('line')
-              .filter(d => {
-                return (d.la_opioid_prescriber_rate !== 0) && (!d.showOpioid || !d.showTotal);
-              })
-              .attr('y1', d => {
-                return this.yscale(d.la_opioid_prescriber_rate);
-              })
-              .attr('y2', d => this.yscale(0))
-              .classed('opioid-prescriber-line opioid-value', true)
-              .classed('white-line', true)
+      group.append('line')
+          .filter(d => {
+            return (d.la_opioid_prescriber_rate !== 0) && (!d.showOpioid || !d.showTotal);
+          })
+          .attr('y1', d => {
+            return this.yscale(d.la_opioid_prescriber_rate);
+          })
+          .attr('y2', d => this.yscale(0))
+          .classed('opioid-prescriber-line opioid-value', true)
+          .classed('white-line', true)
 
       // opioid_prescriber_rate circle
       group.append('circle')
@@ -582,7 +606,7 @@ export default {
 </script>
 
 <style lang="scss">
-  .axis {
+  .y-axis {
     .tick {
       line { stroke: #fff; }
       text {
@@ -718,5 +742,13 @@ export default {
   .white-line {
     stroke: #ffffff !important;
     stroke-width: 3px;
+  }
+  .sentence-la-opioid {
+    fill: #fffff;
+    font-weight: bold;
+  }
+  .sentence-opioid {
+    fill: #F8E368;
+    font-weight: bold;
   }
 </style>

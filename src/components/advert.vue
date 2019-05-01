@@ -7,13 +7,20 @@
       </h3>
       <p class="advert-desc">{{desc}}</p>
     </div>
-    <div class="plus-button" v-on:click="showModal(index)">+</div>
+    <div class="plus-btn-container"
+          v-on:mouseleave="plusHoverOut($event)"
+          v-on:mouseenter="plusHoverIn($event)">
+          <div class="plus-button"
+                v-on:click="showModal(index)">+</div>
+    </div>
     <template v-for="(img, idx) of content">
       <div :class="['advert-img-container',
                     'advert-img-container-'+index,
                     'advert-img-container-'+index+'-'+idx]"
            :key="idx">
-        <img class="img-fluid advert-img" :src="require('../assets/images/' + img.imagelink)"/>
+        <img class="img-fluid advert-img"
+            v-bind:class="{ 'fade-img': isHover }"
+            :src="require('../assets/images/' + img.imagelink)"/>
       </div>
     </template>
 
@@ -31,11 +38,22 @@ export default {
   },
   data: () => {
     return {
+      isHover: false
     }
   },
   methods: {
     showModal: function(index) {
       this.$parent.$emit('modal-open', {index: index - 1});
+    },
+    plusHoverIn: function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.isHover = true;
+    },
+    plusHoverOut: function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.isHover = false;
     }
   }
 }
@@ -78,18 +96,29 @@ export default {
     .advert-img-container-1-2 {
       width: 20%;
     }
-    .plus-button {
-      border-radius: 100px;
-      background-color: #fff;
-      color: #000;
-      width: 45px;
-      font-size: 30px;
-      height: 45px;
-      padding-left: 12px;
-      margin-bottom: 5px;
-      cursor: pointer;
-      &:hover {
-        background-color: #F8E368;
+    .fade-img {
+      opacity: 0.5;
+    }
+    .plus-btn-container {
+      position: absolute;
+      width: 100%;
+      height: 200px;
+      .plus-button {
+        position: absolute;
+        left: 50%;
+        margin-top: 80px;
+        border-radius: 100px;
+        background-color: #fff;
+        color: #000;
+        width: 45px;
+        font-size: 30px;
+        height: 45px;
+        padding-left: 12px;
+        margin-bottom: 5px;
+        cursor: pointer;
+        &:hover {
+          background-color: #F8E368;
+        }
       }
     }
   }

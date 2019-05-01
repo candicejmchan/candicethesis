@@ -1,13 +1,9 @@
 <template>
   <section class="intro">
-    <div class="row">
-      <div class="col-7">
+    <div class="row justify-content-center">
+      <div class="col-6">
         <h1 class="intro-title">{{title}}</h1>
         <p class="intro-desc">{{desc}}</p>
-      </div>
-      <div class="col-5">
-        <img alt="opioid pills" class="opioid-pills img-fluid"
-             src="../assets/images/opioid_pills.png">
       </div>
     </div>
   </section>
@@ -41,22 +37,27 @@ export default {
 </script>
 <style scoped lang="scss">
   .intro {
+    width: 100%;
+    height: 800px;
     background-color: #000;
+    background-repeat:no-repeat;
+    background-size: 100% 100%;
+    background-image: url(~../assets/images/opioid_pills_updated.png);
     .intro-title {
         font-family: 'Lora', serif;
         color: #fff;
         font-size: 40px;
-        margin-top: 50px;
-        text-align: left;
+        margin-top: 150px;
+        text-align: center;
         margin-left: 30px;
     }
     .intro-desc {
         font-family: 'Open Sans', sans-serif;
         color: #fff;
         font-size: 20px;
-        text-align:left;
+        text-align:center;
         margin-left: 30px;
-        margin-top: 90px;
+        margin-top: 60px;
     }
     .opioid-pills {
       width: 100%;
