@@ -240,7 +240,7 @@ export default {
 
   .modal-dialog {
     margin:0px !important;
-    max-width: 100% !important;
+    width: 100% !important;
   }
 
   .modal-number {
