@@ -96,7 +96,7 @@ export default {
       width: 30%;
     }
     .advert-img-container-1-2 {
-      width: 25%;
+      width: 23%;
     }
     .advert-img-container-2-0 {
       width: 60%;
