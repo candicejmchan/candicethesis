@@ -661,6 +661,10 @@ export default {
         a {
           color: #F8E368;
           font-weight: bold;
+          &:hover {
+            background-color: #e1e1e1 !important;
+            color: #000;
+          }
         }
         .dropdown-menu {
           background-color: #000;

@@ -7,19 +7,18 @@
       </h3>
       <p class="advert-desc">{{desc}}</p>
     </div>
-    <div class="plus-btn-container"
-          v-on:mouseleave="plusHoverOut($event)"
-          v-on:mouseenter="plusHoverIn($event)">
-          <div class="plus-button"
-                v-on:click="showModal(index)">+</div>
-    </div>
+    <!-- <div class="plus-button"
+                v-on:click="showModal(index)">+</div> -->
     <template v-for="(img, idx) of content">
       <div :class="['advert-img-container',
                     'advert-img-container-'+index,
                     'advert-img-container-'+index+'-'+idx]"
+            v-on:mouseleave="plusHoverOut($event)"
+            v-on:mouseenter="plusHoverIn($event)"
            :key="idx">
         <img class="img-fluid advert-img"
-            v-bind:class="{ 'fade-img': isHover }"
+            v-bind:class="{ 'fade-img': !isHover }"
+            v-on:click="showModal(index)"
             :src="require('../assets/images/' + img.imagelink)"/>
       </div>
     </template>
@@ -49,11 +48,13 @@ export default {
       event.preventDefault();
       event.stopPropagation();
       this.isHover = true;
+      console.log('hover in');
     },
     plusHoverOut: function(event) {
       event.preventDefault();
       event.stopPropagation();
       this.isHover = false;
+      console.log('hover out');
     }
   }
 }
@@ -83,7 +84,8 @@ export default {
       margin-right: 10px;
       display: inline-block;
       .advert-img {
-        height:200px;
+        cursor: pointer;
+        max-height:200px;
         border-radius: 20px;
       }
     }
@@ -94,31 +96,29 @@ export default {
       width: 30%;
     }
     .advert-img-container-1-2 {
-      width: 20%;
+      width: 25%;
+    }
+    .advert-img-container-2-0 {
+      width: 60%;
     }
     .fade-img {
       opacity: 0.5;
     }
-    .plus-btn-container {
+    .plus-button {
       position: absolute;
-      width: 100%;
-      height: 200px;
-      .plus-button {
-        position: absolute;
-        left: 50%;
-        margin-top: 80px;
-        border-radius: 100px;
-        background-color: #fff;
-        color: #000;
-        width: 45px;
-        font-size: 30px;
-        height: 45px;
-        padding-left: 12px;
-        margin-bottom: 5px;
-        cursor: pointer;
-        &:hover {
-          background-color: #F8E368;
-        }
+      left: 50%;
+      margin-top: 80px;
+      border-radius: 100px;
+      background-color: #fff;
+      color: #000;
+      width: 45px;
+      font-size: 30px;
+      height: 45px;
+      padding-left: 12px;
+      margin-bottom: 5px;
+      cursor: pointer;
+      &:hover {
+        background-color: #F8E368;
       }
     }
   }

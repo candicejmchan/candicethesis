@@ -51,13 +51,13 @@
         <template v-for="(img, index) of modalContent" v-if="index === showImageIndex">
           <b-row>
             <b-col cols="11">
-                <h3 class="float-left">{{img.index}}.</h3>
+                <h3 class="float-left modal-number">{{img.index}}</h3>
             </b-col>
             <b-col cols="1">
                 <p class="modal-close-btn" v-on:click="closeModal()">x</p>
             </b-col>
           </b-row>
-          <b-row>
+          <b-row class="modal-img-content">
             <b-col cols="2">
               <button class="modal-prev-btn modal-nav-btn" v-on:click="changeModalImage('prev')"><</button>
             </b-col>
@@ -198,7 +198,13 @@ export default {
         text-align: left;
       }
       .modal-close-btn {
-        font-size: 20px;
+        background-color: transparent;
+        color: #fff;
+        border: none;
+        font-size: 50px;
+        font-weight: bold;
+        margin-bottom: 50px;
+        margin-top: -50px;
         cursor: pointer;
         &:hover {
           color: yellow;
@@ -230,6 +236,22 @@ export default {
     left: 18%;
     font-size: 25px;
     width: 70%;
-  }  
+  }
+
+  .modal-dialog {
+    margin:0px !important;
+    max-width: 100% !important;
+  }
+
+  .modal-number {
+    font-size: 600px;
+    position: absolute;
+    left: 0;
+    opacity: 0.5;
+  }
+
+  .modal-img-content {
+    margin-left: 20% !important;
+  }
 
 </style>

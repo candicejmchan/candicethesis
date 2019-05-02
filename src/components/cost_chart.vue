@@ -26,7 +26,16 @@
       <span class="cost-value">
         {{costValue}}
       </span>
-      on opioids per year
+      on opioids in year
+      <span class="selected-year dropdown-container">
+        <b-nav-item-dropdown :text="year.toString()" right>
+          <b-dropdown-item href="#" :key="index"
+              v-on:click="selectYear(y)"
+              v-for="(y, index) of years">
+              {{y}}
+          </b-dropdown-item>
+        </b-nav-item-dropdown>
+      </span>
     </div>
   </div>
 </template>
@@ -73,6 +82,7 @@ export default {
   data: () => {
     return {
       year: INITYEAR,
+      years: YEARS,
       data: [],
       internalMeds: [],
       states: [],
@@ -177,6 +187,16 @@ export default {
           self.changeYearData();
           self.drawChart();
         });
+    },
+    selectYear(y) {
+      this.year = y;
+      d3.selectAll('.cost-year-axis .tick text')
+        .classed('highlighted', function(d) {
+          const year = +d3.select(this).text();
+          return year === y ? true : false;
+        });
+      this.changeYearData();
+      this.drawChart();
     },
     selectState(state) {
       this.selectedState = state; //{ state: state, name: STATES[state] };
@@ -521,6 +541,10 @@ export default {
         a {
           color: #F8E368;
           font-weight: bold;
+          &:hover {
+            background-color: #e1e1e1 !important;
+            color: #000;
+          }
         }
         .dropdown-menu {
           background-color: #000;
@@ -595,5 +619,11 @@ export default {
   }
   .colored-circle {
     stroke: #F8E368;
+  }
+  .dropdown-menu::-webkit-scrollbar {
+      display: none !important;
+  }
+  .selected-year .dropdown-menu {
+    height: 200px !important;
   }
 </style>

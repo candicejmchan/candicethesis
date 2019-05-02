@@ -38,7 +38,7 @@ export default {
 <style scoped lang="scss">
   .intro {
     width: 100%;
-    height: 800px;
+    height: 1000px;
     background-color: #000;
     background-repeat:no-repeat;
     background-size: 100% 100%;
@@ -47,7 +47,7 @@ export default {
         font-family: 'Lora', serif;
         color: #fff;
         font-size: 40px;
-        margin-top: 150px;
+        margin-top: 220px;
         text-align: center;
         margin-left: 30px;
     }
@@ -57,7 +57,7 @@ export default {
         font-size: 20px;
         text-align:center;
         margin-left: 30px;
-        margin-top: 60px;
+        margin-top: 100px;
     }
     .opioid-pills {
       width: 100%;
