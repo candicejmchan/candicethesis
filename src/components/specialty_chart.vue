@@ -687,6 +687,7 @@ export default {
     }
   }
   .specialty-chart-heading {
+    font-family: 'Adelle Bold', sans-serif;
     font-size: 40px;
     fill: #F8E368;
   }

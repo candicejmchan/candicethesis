@@ -28,17 +28,18 @@
         <CostChart />
       </div>
     </section>
+    <OpioidList :data="opioidList" />
     <section>
       <div class="row">
         <div class="col-12">
-          <div class="quote">
+          <!-- <div class="quote">
             <p class="quote-text">
               “ In your mind, you can be O.K.; you can just do one. But one too many, and a thousand is never enough.“
             </p>
             <p class="quote-author">- Bruce Cherry, 58, Pennsylvania</p>
-          </div>
-          <img alt="yellow smoke" class="black-yellow-smoke img-fluid"
-               src="../assets/images/black_and_yellow_smoke.png"/>
+          </div> -->
+          <img alt="yellow smoke" class="bottom-img img-fluid"
+               src="../assets/images/opioid_bottom_picture.png"/>
         </div>
       </div>
     </section>
@@ -95,6 +96,7 @@ import Intro from '@/components/intro.vue'
 import Advert from '@/components/advert.vue'
 import SpecialtyChart from '@/components/specialty_chart.vue'
 import CostChart from '@/components/cost_chart.vue'
+import OpioidList from '@/components/opioid_list.vue'
 
 export default {
   name: 'home',
@@ -104,6 +106,7 @@ export default {
       introDesc: CONFIG.desc,
       introBackground: CONFIG.background,
       content: CONFIG.content,
+      opioidList: CONFIG.opioid_list,
       modalContent: [],
       showImageIndex: 0
     }
@@ -150,16 +153,17 @@ export default {
     Intro,
     Advert,
     SpecialtyChart,
-    CostChart
+    CostChart,
+    OpioidList
   }
 }
 </script>
 <style lang="scss">
   .heading {
-    font-family: 'Lora', serif;
+    font-family: 'Adelle Bold', sans-serif;
   }
   .description {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Adelle Regular', sans-serif;
   }
   .home {
     padding-left: 0px;
@@ -224,9 +228,8 @@ export default {
     }
   }
 
-  .black-yellow-smoke {
+  .bottom-img {
     width: 100%;
-    opacity:0.5;
   }
   .quote {
     font-family: 'Open Sans', sans-serif;
@@ -253,6 +256,10 @@ export default {
 
   .modal-img-content {
     margin-left: 20% !important;
+  }
+
+  .specialty-chart-section, .cost-chart-section {
+    margin-top: 9em;
   }
 
 </style>

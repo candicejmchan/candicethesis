@@ -1,0 +1,178 @@
+<template>
+  <section class="opioid-list-section">
+      <div class="row justify-content-center">
+        <div class="col-7">
+          <h1 class="opioid-list-title heading">{{data.title}}</h1>
+          <p class="opioid-list-desc description">{{data.desc}}</p>
+        </div>
+      </div>
+      <section class="opioid-names">
+        <div class="row" v-for="(row, index) in rows" :key="'opioid-' + index">
+          <div class="col-3" v-for="(col, idx) in row" :key="'opioid-col-' + idx">
+              <p class="opioid-name heading"
+                 :class="{'selected-opioid-name': selectedOpioid.title === col.title}"
+                 v-on:click="opioidClicked(col)">{{col.title}}</p>
+          </div>
+        </div>
+      </section>
+      <section class="opioid-details" v-if="showOpioid">
+        <div class="row">
+          <div class="col-3">
+            <img class="img-fluid opioid-img" :src="selectedOpioid.src"/>
+          </div>
+          <div class="offset-1 col-8">
+              <div class="row">
+                <div class="col-12">
+                  <p class="opioid-title">{{selectedOpioid.title}}</p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <p>{{selectedOpioid.desc}}</p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <p>{{selectedOpioid.names}}</p>
+                </div>
+              </div>
+              <div class="row withdrawal-symptoms">
+                <div class="col-3">
+                  <p>{{selectedOpioid.title}}</p>
+                  <p>WITHDRAWAL</p>
+                  <p>Symptoms</p>
+                </div>
+                <div class="col-8">
+                  <div class="row" v-for="(orow, oindex) in selectedOpioid.symptoms" :key="'symptom-'+oindex">
+                    <div class="col-4" v-for="(ocol, oidx) in orow" :key="'symptom-col'+oidx">
+                      <div class="opioid-pill-box">
+                        <div class="top"></div>
+                        <div class="bottom"></div>
+                      </div>
+                      <div class="opioid-symptom-name">
+                        <span>{{ocol}}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-1">
+                  <button class="opioid-nav-btn" v-on:click="changeOpioid()">></button>
+                </div>
+              </div>
+          </div>
+        </div>
+      </section>
+  </section>
+</template>
+<script>
+
+import * as _ from 'lodash'
+
+export default {
+  name: 'OpioidList',
+  props: {
+    data: Object
+  },
+  data: () => {
+    return {
+      rows: [],
+      colsize: 4,
+      selectedOpioid: {},
+      showOpioid: false,
+      content: []
+    }
+  },
+  mounted(){
+    this.workOnData(this.data.content);
+  },
+  watch: {
+    data: function(prev, current){
+      this.workOnData(current.content);
+    }
+  },
+  methods: {
+    opioidClicked(opioid) {
+      this.selectedOpioid = opioid;
+      this.showOpioid = true;
+    },
+    workOnData(content) {
+      this.content = _.map(content, d => {
+        d.src = require('../' + d.imgsrc);
+        d.names = `Common Street Names: ${d.street_names.join(', ')}`;
+        d.symptoms = _.chunk(d.symptoms, 3);
+        return d;
+      });
+      this.rows = _.chunk(this.content, this.colsize);
+    },
+    changeOpioid() {
+      const titles = _.map(this.content, 'title');
+      const index = titles.indexOf(this.selectedOpioid.title);
+      let newIndex = index + 1;
+      newIndex = newIndex === this.content.length ? 0 : newIndex;
+      this.selectedOpioid = this.content[newIndex];
+    }
+  }
+}
+</script>
+<style lang="scss">
+.opioid-list-title {
+  color: #F8E368;
+}
+.opioid-list-desc {
+  color: #FFF;
+}
+.opioid-names {
+  margin-top: 50px;
+  .opioid-name {
+    color: #FFF;
+    font-size: 30px;
+    cursor: pointer;
+    text-align: left;
+    margin-left: 30%;
+  }
+  .selected-opioid-name {
+    color: #F8E368;
+  }
+}
+.opioid-details {
+  margin-top: 100px;
+  margin-bottom: 100px;
+  text-align: left;
+  color: #fff;
+  font-size: 20px;
+  font-family: 'Adelle Regular' sans-serif;
+  .opioid-title {
+    font-size: 30px;
+    color: #F8E368;
+  }
+  .withdrawal-symptoms {
+    margin-top: 50px;
+    .opioid-symptom-name {
+      display: inline-block;
+    }
+    .opioid-pill-box {
+      height: 100px;
+      width: 50px;
+      display: inline-block;
+      .top {
+        background-color: #F8E368;
+        height: 50%;
+      }
+      .bottom {
+        background-color: #FFF;
+        height: 50%;
+      }
+    }
+    .opioid-nav-btn {
+      background-color: transparent;
+      color: #fff;
+      border: none;
+      font-size: 50px;
+      font-weight: bold;
+    }
+  }
+}
+.opioid-img {
+  margin-left: 20%;
+}
+</style>

@@ -9,10 +9,22 @@
 </template>
 
 <style lang="scss">
+@font-face {
+  font-family: "Adelle Bold";
+  font-style: normal;
+  font-weight: normal;
+  src: url(~./assets/fonts/adelle-cufonfonts-webfont/Adelle_Bold.woff) format('woff');
+}
+@font-face {
+  font-family: 'Adelle Regular';
+  font-style: normal;
+  font-weight: normal;
+  src: url(~./assets/fonts/adelle-cufonfonts-webfont/Adelle_Reg.woff) format('woff');
+}
 @import url('https://fonts.googleapis.com/css?family=Lora');
 @import url('https://fonts.googleapis.com/css?family=Open+Sans');
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: 'Adelle Regular', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;

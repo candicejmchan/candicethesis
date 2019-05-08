@@ -71,13 +71,14 @@ export default {
     .heading-desc {
       height: 200px;
       .advert-heading {
-        font-family: 'Lora', serif;
+        font-family: 'Adelle Bold', sans-serif;
         span {
           text-decoration: underline;
         }
       }
       .advert-desc {
-        font-family: 'Open Sans', sans-serif;
+        margin-top: 15px;
+        font-family: 'Adelle Regular', sans-serif;
       }
     }
     .advert-img-container {

@@ -44,7 +44,7 @@ export default {
     background-size: 100% 100%;
     background-image: url(~../assets/images/opioid_pills_updated.png);
     .intro-title {
-        font-family: 'Lora', serif;
+        font-family: 'Adelle Bold', sans-serif;
         color: #fff;
         font-size: 40px;
         margin-top: 220px;
@@ -52,7 +52,7 @@ export default {
         margin-left: 30px;
     }
     .intro-desc {
-        font-family: 'Open Sans', sans-serif;
+        font-family: 'Adelle Regular', sans-serif;
         color: #fff;
         font-size: 20px;
         text-align:center;

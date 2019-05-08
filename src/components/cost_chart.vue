@@ -108,7 +108,7 @@ export default {
       this.svgElement = this.$refs.cost;
       this.initChart();
       this.drawChart();
-      this.addYearAxis();
+      // this.addYearAxis();
   },
   methods: {
     initChart: function() {
@@ -140,7 +140,7 @@ export default {
 
       // chart heading
       this.svg.append('text')
-        .classed('specialty-chart-heading heading', true)
+        .classed('cost-chart-heading heading', true)
         .attr('x', headingWidth - 30)
         .attr('y', HEADING_SHIFT)
         .text(heading);
@@ -555,13 +555,10 @@ export default {
       }
     }
   }
-  .specialty-chart-heading {
+  .cost-chart-heading {
+    font-family: 'Adelle Bold', sans-serif;
     font-size: 40px;
     fill: #F8E368;
-  }
-  .specialty-chart-sub-heading {
-    fill: #FFF;
-    font-size: 20px;
   }
   .ball-group {
     cursor: pointer;
