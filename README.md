@@ -1,12 +1,12 @@
 ### Project title
-Exploring Post-Harvest Food Loss and Electricity Access in Africa
+Opioids: The Branding and Commercialization of Pain
 
 ### Project Caption
-Post-harvest food loss, defined as a reduction in quantity and quality of food between the farm and the point of sale, is one of the main factors of food insecurity and hunger across Africa. This project explores the relationship between electricity access and post-harvest food loss of one major crop, Maize, in order to highlight areas within the food supply chain that need the greatest improvements.
+Over the past two decades, the branding and commercialization of opioids has created one of the greatest commercial successes and public health tragedies in the United States. Multifaceted marketing strategies, created by large pharmaceutical companies, highlight how the carefully curated image of opioids created a ubiquitous presence of the drug across the United States and changed the way Americans perceive pain.
 
 ### Visualization
-[link](https://candicejmchan.github.io/major-studio-1/UNDP/Code/)
+[link](https://candicejmchan.github.io/candicethesis)
 
 ### Preview Image
 
-![Sketch](PreviewImage.png)
+![Sketch](preview.png)
