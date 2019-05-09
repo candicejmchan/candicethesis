@@ -54,7 +54,7 @@ import data_2016 from '@/assets/data/2016.json'
 import STATES from '@/assets/states.json'
 
 // init chart constants
-const WIDTH = 1200
+const WIDTH = 1250
 const HEIGHT = 800
 const MARGIN = {
   top: 20,
@@ -296,31 +296,31 @@ export default {
         .attr('class', 'hor-line-total-cost')
         .attr('x1', this.centerx - 200)
         .attr('y1', this.centery)
-        .attr('x2', this.centerx - 500)
+        .attr('x2', this.centerx - 500 - 80)
         .attr('y2', this.centery)
         .style('stroke', '#fff')
         .style('stroke-width', '2px');
 
       group.append('text')
-        .attr('x', this.centerx - 500)
+        .attr('x', this.centerx - 500 - 80)
         .attr('y', this.centery - 50)
         .attr('class', 'circle-text')
         .text(this.textFormat(total_selected_state));
 
       group.append('text')
-        .attr('x', this.centerx - 500)
+        .attr('x', this.centerx - 500 - 80)
         .attr('y', this.centery - 20)
         .attr('class', 'circle-text-general')
         .text('Total Cost of Drugs in Internal Medicine');
 
       group.append('text')
-        .attr('x', this.centerx - 500)
+        .attr('x', this.centerx - 500 - 80)
         .attr('y', this.centery + 30)
         .attr('class', 'circle-text-general')
         .text(`Total Branded Drug Costs: ${this.textFormat(total_branded)}`);
 
       group.append('text')
-        .attr('x', this.centerx - 500)
+        .attr('x', this.centerx - 500 - 80)
         .attr('y', this.centery + 60)
         .attr('class', 'circle-text-general')
         .text(`Total Generic Drug Costs: ${this.textFormat(total_generic)}`);
@@ -405,28 +405,28 @@ export default {
         .attr('class', 'hor-line-opioid')
         .attr('x1', this.centerx + 200)
         .attr('y1', this.centery)
-        .attr('x2', this.centerx + 500)
+        .attr('x2', WIDTH)
         .attr('y2', this.centery)
         .style('stroke', '#fff')
         .style('stroke-width', '2px');
 
       group.append('text')
         .attr('x', this.centerx + 500)
-        .attr('dx', -150)
+        .attr('dx', 0)
         .attr('y', this.centery - 50)
         .attr('class', 'circle-text')
         .text(this.textFormat(total_selected_state_opioid));
 
       group.append('text')
         .attr('x', this.centerx + 500)
-        .attr('dx', -295)
+        .attr('dx', -200)
         .attr('y', this.centery - 20)
         .attr('class', 'circle-text-general')
-        .text('of the total cost of drugs spent on opiods');
+        .text('Total cost of drugs spent on opiods');
 
       group.append('text')
         .attr('x', this.centerx + 500)
-        .attr('dx', -295)
+        .attr('dx', -180)
         .attr('y', this.centery + 30)
         .attr('class', 'circle-text-general')
         .text(`Total Opioid Drug Costs: ${this.textFormat(total_opioid_drug_cost)}`);
@@ -607,7 +607,7 @@ export default {
   }
   .circle-text-general {
     fill: #fff;
-    font-size: 16px;
+    font-size: 20px;
   }
   .circle-ring {
     stroke: #fff;

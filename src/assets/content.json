@@ -24,7 +24,7 @@
         },
         {
             "title": "Pain as the “Fifth Vital Sign",
-            "desc": "In 1995, following concern for under management of pain, the American Pain Society in collaboration with the Veteran’s Health Administration and the Joint Commission introduced pain as the “fifth vital sign”. Since vital signs are taken seriously, the phrase was initially coined to heighten awareness of pain treatment amongst healthcare professionals.",
+            "desc": "In 1995, following concern for under management of pain, the American Pain Society, the Veteran’s Health Administration and the Joint Commission introduced pain as the “fifth vital sign”. Since vital signs are taken seriously, the phrase was initially coined to heighten awareness of pain treatment amongst healthcare professionals.",
             "content": [
                 {
                     "imagelink": "2.1.png",
@@ -67,20 +67,20 @@
     ],
     "opioid_list": {
       "title": "What are the Most Commonly Used Opioids?",
-      "desc": "Explore list of some of the most commonly abused painkillers",
+      "desc": "Explore a list of some of the most commonly used painkillers",
       "content": [
         {
           "title": "Fentanyl",
           "imgsrc": "assets/images/fentanyl.png",
-          "desc": "This drug is said to be more potent than morphine. It is often used to treat severe pain, or pain after surgical procedures. It’s often given to people who are resistant to other opiates.",
-          "street_names": ["Apache", "China", "Girl", "Murder 8", "Tango", "Cash", "TNT"],
-          "symptoms": ["Insomnia", "Sweating", "Yawning", "Dialated Pupils", "Goosebumps", "Runny nose"]
+          "desc": "Fentanyl is the strongest opioid on the market, up to 100 times more potent than morphine and 50 times stronger than heroin. It is often used to treat severe pain, or pain after surgical procedures.",
+          "street_names": ["Apache", "Tango", "Cash", "TNT"],
+          "symptoms": ["Fevers", "Sweating", "Naseau", "Muscle Pain", "Confusion", "Restlessness"]
         },
         {
           "title": "OxyContin",
           "imgsrc": "assets/images/oxycontin.png",
-          "desc": "This drug is said to be more potent than morphine. It is often used to treat severe pain, or pain after surgical procedures. It’s often given to people who are resistant to other opiates.",
-          "street_names": ["Apache", "China", "Girl", "Murder 8", "Tango", "Cash", "TNT"],
+          "desc": "Oxycontin plays a vital role in the opioid epidemic due to Purdue Pharma's marketing which led to millions of harmful prescriptions of the drug from the late 1990s.",
+          "street_names": ["Oxy", "Oxycotton", "Kickers", "OC", "Roxy"],
           "symptoms": ["Insomnia", "Sweating", "Yawning", "Dialated Pupils", "Goosebumps", "Runny nose"]
         },
         {
@@ -93,52 +93,39 @@
         {
           "title": "Methadone",
           "imgsrc": "assets/images/methadone.png",
-          "desc": "This drug is said to be more potent than morphine. It is often used to treat severe pain, or pain after surgical procedures. It’s often given to people who are resistant to other opiates.",
-          "street_names": ["Apache", "China", "Girl", "Murder 8", "Tango", "Cash", "TNT"],
-          "symptoms": ["Insomnia", "Sweating", "Yawning", "Dialated Pupils", "Goosebumps", "Runny nose"]
+          "desc": "Methadone is of the synthetic variety and is most commonly prescribed as a part of opioid replacement therapy (ORT) for opioid addiction.",
+          "street_names": ["Done", "Dollies", "Metho", "Wafer", "Fizzies", "Methadose"],
+          "symptoms": ["Confusion", "Tremors", "irritability", "Mood Swings", "Fatigue", "Depression"]
         },
         {
           "title": "MS Contin",
           "imgsrc": "assets/images/mscontin.png",
-          "desc": "This drug is said to be more potent than morphine. It is often used to treat severe pain, or pain after surgical procedures. It’s often given to people who are resistant to other opiates.",
+          "desc": "MS Contin is helpful for treating ongoing pain. Many cancer patients rely on this drug for pain relief.",
           "street_names": ["Apache", "China", "Girl", "Murder 8", "Tango", "Cash", "TNT"],
           "symptoms": ["Insomnia", "Sweating", "Yawning", "Dialated Pupils", "Goosebumps", "Runny nose"]
         },
         {
           "title": "Percocet",
           "imgsrc": "assets/images/percocet.png",
-          "desc": "This drug is said to be more potent than morphine. It is often used to treat severe pain, or pain after surgical procedures. It’s often given to people who are resistant to other opiates.",
-          "street_names": ["Apache", "China", "Girl", "Murder 8", "Tango", "Cash", "TNT"],
-          "symptoms": ["Insomnia", "Sweating", "Yawning", "Dialated Pupils", "Goosebumps", "Runny nose"]
+          "desc": "Percocet is often prescribed for injury or surgery-related pain. It is not as over-prescribed as the widely marketed OxyContin, it has been the cause of many unintentional addictions.",
+          "street_names": ["Percs", "Oxycet", "C.", "Greenies", "Rims"],
+          "symptoms": ["Insomnia", "shallow breathing", "chills", "high blood pressure", "irritability", "Vomiting"]
         },
         {
           "title": "Codeine",
           "imgsrc": "assets/images/codeine.png",
-          "desc": "This drug is said to be more potent than morphine. It is often used to treat severe pain, or pain after surgical procedures. It’s often given to people who are resistant to other opiates.",
-          "street_names": ["Apache", "China", "Girl", "Murder 8", "Tango", "Cash", "TNT"],
-          "symptoms": ["Insomnia", "Sweating", "Yawning", "Dialated Pupils", "Goosebumps", "Runny nose"]
+          "desc": "Codeine is a less potent form of prescription painkiller and is sometimes abused in its tablet form; however, the most popular way to abuse codeine is by drinking the liquid cough syrup that contains it.",
+          "street_names": ["Lean", "Dirty Sprite", "Sizzurp"],
+          "symptoms": ["Loss of Appetite", "Cramps", "Naseau", "Insomnia", "Yawning", "Enlarged Pupils"]
         },
         {
           "title": "Dilaudid",
           "imgsrc": "assets/images/dilaudid.png",
-          "desc": "This drug is said to be more potent than morphine. It is often used to treat severe pain, or pain after surgical procedures. It’s often given to people who are resistant to other opiates.",
-          "street_names": ["Apache", "China", "Girl", "Murder 8", "Tango", "Cash", "TNT"],
-          "symptoms": ["Insomnia", "Sweating", "Yawning", "Dialated Pupils", "Goosebumps", "Runny nose"]
-        },
-        {
-          "title": "Morphine",
-          "imgsrc": "assets/images/morphine.png",
-          "desc": "This drug is said to be more potent than morphine. It is often used to treat severe pain, or pain after surgical procedures. It’s often given to people who are resistant to other opiates.",
-          "street_names": ["Apache", "China", "Girl", "Murder 8", "Tango", "Cash", "TNT"],
-          "symptoms": ["Insomnia", "Sweating", "Yawning", "Dialated Pupils", "Goosebumps", "Runny nose"]
-        },
-        {
-          "title": "Hydrocodone",
-          "imgsrc": "assets/images/hydrocodone.png",
-          "desc": "This drug is said to be more potent than morphine. It is often used to treat severe pain, or pain after surgical procedures. It’s often given to people who are resistant to other opiates.",
-          "street_names": ["Apache", "China", "Girl", "Murder 8", "Tango", "Cash", "TNT"],
-          "symptoms": ["Insomnia", "Sweating", "Yawning", "Dialated Pupils", "Goosebumps", "Runny nose"]
+          "desc": "The drug is manufactured in different forms that can be taken orally as a pill, liquid, or injected.",
+          "street_names": ["Dillies", "M80s", "Hospital heroin"],
+          "symptoms": ["Cramps", "Agitation", "Tremors", "Low Blood Pressure", "Sweats", "Anxiety"]
         }
+
       ]
     }
 }

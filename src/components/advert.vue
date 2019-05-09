@@ -69,7 +69,8 @@ export default {
     color: #fff;
     margin-left: 30px;
     .heading-desc {
-      height: 200px;
+      height: 230px;
+      margin-bottom: 40px;
       .advert-heading {
         font-family: 'Adelle Bold', sans-serif;
         span {
@@ -77,6 +78,7 @@ export default {
         }
       }
       .advert-desc {
+        font-size:20px;
         margin-top: 15px;
         font-family: 'Adelle Regular', sans-serif;
       }

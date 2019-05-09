@@ -20,27 +20,32 @@
           <div class="col-3">
             <img class="img-fluid opioid-img" :src="selectedOpioid.src"/>
           </div>
-          <div class="offset-1 col-8">
+          <div class="offset-1 col-8" style="margin-left: 6.93%;">
               <div class="row">
-                <div class="col-12">
+                <div class="col-11">
                   <p class="opioid-title">{{selectedOpioid.title}}</p>
                 </div>
               </div>
               <div class="row">
-                <div class="col-12">
+                <div class="col-11">
                   <p>{{selectedOpioid.desc}}</p>
                 </div>
               </div>
               <div class="row">
-                <div class="col-12">
+                <div class="col-11">
                   <p>{{selectedOpioid.names}}</p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="offset-11 col-1">
+                  <button class="opioid-nav-btn" v-on:click="changeOpioid()">></button>
                 </div>
               </div>
               <div class="row withdrawal-symptoms">
                 <div class="col-3">
-                  <p>{{selectedOpioid.title}}</p>
-                  <p>WITHDRAWAL</p>
-                  <p>Symptoms</p>
+                  <p style="color: #F8E368; margin-top: 30px; margin-bottom: 0px;">{{selectedOpioid.title}}</p>
+                  <p style="margin-top:0px; margin-bottom: 0px;">Withdrawal</p>
+                  <p style="margin-top:0px">Symptoms</p>
                 </div>
                 <div class="col-8">
                   <div class="row" v-for="(orow, oindex) in selectedOpioid.symptoms" :key="'symptom-'+oindex">
@@ -54,9 +59,6 @@
                       </div>
                     </div>
                   </div>
-                </div>
-                <div class="col-1">
-                  <button class="opioid-nav-btn" v-on:click="changeOpioid()">></button>
                 </div>
               </div>
           </div>
@@ -120,6 +122,7 @@ export default {
 }
 .opioid-list-desc {
   color: #FFF;
+  font-size:20px;
 }
 .opioid-names {
   margin-top: 50px;
@@ -146,13 +149,19 @@ export default {
     color: #F8E368;
   }
   .withdrawal-symptoms {
-    margin-top: 50px;
+    margin-top: -50px;
     .opioid-symptom-name {
       display: inline-block;
+      height: 50px;
+      margin-left:10px;
+      span {
+        position: absolute;
+        top: 35%;
+      }
     }
     .opioid-pill-box {
-      height: 100px;
-      width: 50px;
+      height: 30px;
+      width: 10px;
       display: inline-block;
       .top {
         background-color: #F8E368;
@@ -163,14 +172,14 @@ export default {
         height: 50%;
       }
     }
-    .opioid-nav-btn {
-      background-color: transparent;
-      color: #fff;
-      border: none;
-      font-size: 50px;
-      font-weight: bold;
-    }
   }
+}
+.opioid-nav-btn {
+  background-color: transparent;
+  color: #fff;
+  border: none;
+  font-size: 50px;
+  font-weight: bold;
 }
 .opioid-img {
   margin-left: 20%;

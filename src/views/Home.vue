@@ -159,6 +159,10 @@ export default {
 }
 </script>
 <style lang="scss">
+.container-fluid {
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
   .heading {
     font-family: 'Adelle Bold', sans-serif;
   }
@@ -182,9 +186,11 @@ export default {
     position: absolute !important;
     top: 20px !important;
     left: 20px !important;
+    border: 1px solid #000 !important;
     .modal-body {
       background-color: #000;
       color: #fff;
+      border: 1px solid #000 !important;
       .modal-prev-btn {
         display: inline-block;
       }
@@ -200,6 +206,7 @@ export default {
       }
       .modal-img-desc {
         text-align: left;
+        font-size:20px;
       }
       .modal-close-btn {
         background-color: transparent;
@@ -226,6 +233,10 @@ export default {
     .advert-3 {
       margin-top: 200px;
     }
+  }
+
+  .opioid-list-section {
+    margin-top: 10%;
   }
 
   .bottom-img {

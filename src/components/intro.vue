@@ -55,7 +55,7 @@ export default {
         font-family: 'Adelle Regular', sans-serif;
         color: #fff;
         font-size: 20px;
-        text-align:center;
+        text-align: justify;
         margin-left: 30px;
         margin-top: 100px;
     }
