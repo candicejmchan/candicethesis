@@ -48,7 +48,7 @@
         },
         {
             "title": "Purdue- JCAHO Partnership",
-            "desc": "The Joint Commission (JCAHO) is an organization that accredits more than 21,000 US health care organizations and programs.The Purdue-JCAHO partnership is an example of how big pharmaceutical companies formed strong alliances in order to push their drugs forward.",
+            "desc": "The Joint Commission (JCAHO) is an organization that accredits more than 21,000 US health care organizations and programs. The Purdue-JCAHO partnership is an example of how big pharmaceutical companies formed strong alliances in order to push their drugs forward.",
             "content": [
                 {
                     "imagelink": "4.1.png",
@@ -87,7 +87,7 @@
           "title": "Demerol",
           "imgsrc": "assets/images/demerol.png",
           "desc": "This drug is said to be more potent than morphine. It is often used to treat severe pain, or pain after surgical procedures. It’s often given to people who are resistant to other opiates.",
-          "street_names": ["Apache", "China", "Girl", "Murder 8", "Tango", "Cash", "TNT"],
+          "street_names": ["Demmies", "Pain Killer"],
           "symptoms": ["Insomnia", "Sweating", "Yawning", "Dialated Pupils", "Goosebumps", "Runny nose"]
         },
         {
@@ -101,7 +101,7 @@
           "title": "MS Contin",
           "imgsrc": "assets/images/mscontin.png",
           "desc": "MS Contin is helpful for treating ongoing pain. Many cancer patients rely on this drug for pain relief.",
-          "street_names": ["Apache", "China", "Girl", "Murder 8", "Tango", "Cash", "TNT"],
+          "street_names": ["God’s Drug", "Miss Emma","Monkey","Morpho"],
           "symptoms": ["Insomnia", "Sweating", "Yawning", "Dialated Pupils", "Goosebumps", "Runny nose"]
         },
         {

@@ -229,6 +229,24 @@ export default {
         this.selectedState = this.states.filter(d => d.state === 'ALL')[0]
       if(this.selectedMed === '')
         this.selectedMed = this.internalMeds.filter(d => d === 'Internal Medicine')[0]
+
+      const groupings = _.chain(this.data)
+        .groupBy('specialty_description')
+        .toPairs()
+        .map(d => {
+          const totalCostOfDrugs = _.reduce(d[1], (sum, val) => sum + (+val['total_drug_cost'] || 0), 0);
+          const totalOpioidCost = _.reduce(d[1], (sum, val) => sum + (+val.opioid_drug_cost || 0) + (+val.la_opioid_drug_cost || 0), 0);
+          return {
+            specialty_description: d[0],
+            totalCostOfDrugs,
+            totalOpioidCost
+          }
+        })
+        .sortBy(d => d.totalOpioidCost)
+        .value();
+
+      console.log(groupings);
+
     },
     filterData: function() {
     },

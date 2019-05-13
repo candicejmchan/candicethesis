@@ -52,7 +52,7 @@
                     <div class="col-4" v-for="(ocol, oidx) in orow" :key="'symptom-col'+oidx">
                       <div class="opioid-pill-box">
                         <div class="top"></div>
-                        <div class="bottom"></div>
+                        <!-- <div class="bottom"></div> -->
                       </div>
                       <div class="opioid-symptom-name">
                         <span>{{ocol}}</span>
@@ -160,12 +160,15 @@ export default {
       }
     }
     .opioid-pill-box {
-      height: 30px;
+      height: 15px;
       width: 10px;
       display: inline-block;
       .top {
         background-color: #F8E368;
-        height: 50%;
+        border-radius: 20px;
+        height: 100%;
+        width: 15px;
+        margin-top: -8px;
       }
       .bottom {
         background-color: #FFF;
